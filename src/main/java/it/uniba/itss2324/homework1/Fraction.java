@@ -17,7 +17,7 @@ package it.uniba.itss2324.homework1;
 public final class Fraction
 {
     /**
-     * The numerator number part of the fraction (the three in three sevenths).
+     * The numerator number part of the fraction
      */
     private int numerator;
 
@@ -37,7 +37,7 @@ public final class Fraction
     }
 
     /**
-     * The denominator number part of the fraction (the seven in three sevenths).
+     * The denominator number part of the fraction
      */
     private int denominator;
 
@@ -72,8 +72,24 @@ public final class Fraction
      * @param numerator  the numerator, for example the three in 'three sevenths'
      * @param denominator  the denominator, for example the seven in 'three sevenths'
      */
-    public Fraction(final int numerator, final int denominator)
+    public Fraction(int numerator, int denominator)
     {
+        if (denominator == 0)
+        {
+            throw new ArithmeticException("The denominator must not be zero");
+        }
+
+        if (denominator < 0)
+        {
+            if (numerator == Integer.MIN_VALUE || denominator == Integer.MIN_VALUE)
+            {
+                throw new ArithmeticException("overflow: can't negate");
+            }
+
+            numerator = -numerator;
+            denominator = -denominator;
+        }
+
         this.numerator = numerator;
         this.denominator = denominator;
     }

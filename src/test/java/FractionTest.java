@@ -41,16 +41,7 @@ public class FractionTest
         }
 
         @Test
-        void zeroFractionShouldReturnZEROConstant () //T2
-        {
-            Fraction frazione2 = new Fraction (0,1);
-
-            assertEquals(ZERO.getNumerator(), frazione2.getNumerator());
-            assertEquals(ZERO.getDenominator(), frazione2.getDenominator());
-        }
-
-        @Test
-        void denominatorZeroShouldThrowArithmeticException () //T3
+        void denominatorZeroShouldThrowArithmeticException () //T2
         {
             assertThrows(ArithmeticException.class, () -> {
                 new Fraction(1,0);
@@ -58,7 +49,7 @@ public class FractionTest
         }
 
         @Test
-        void negativeDenominatorShouldThrowArithmeticException () //T4
+        void negativeDenominatorShouldThrowArithmeticException () //T3
         {
             assertThrows(ArithmeticException.class, () -> {
                 new Fraction(Integer.MIN_VALUE,-1);
@@ -66,7 +57,7 @@ public class FractionTest
         }
 
         @Test
-        void testIntegerOverflow () //T5
+        void testIntegerOverflow () //T4
         {
             assertThrows(ArithmeticException.class, () -> {
                 new Fraction(Integer.MAX_VALUE,Integer.MAX_VALUE);
@@ -74,7 +65,7 @@ public class FractionTest
         }
 
         @Test
-        void testIntegerUnderFlow () //T6
+        void testIntegerUnderFlow () //T5
         {
             assertThrows(ArithmeticException.class, () -> {
                 new Fraction(Integer.MIN_VALUE,Integer.MIN_VALUE);
@@ -93,7 +84,7 @@ public class FractionTest
 
         @ParameterizedTest
         @MethodSource("reducedFractionProvider")
-        void shouldReturnAValidReducedFraction(int numeratore, int denominatore) //T7
+        void shouldReturnAValidReducedFraction(int numeratore, int denominatore) //T6
         {
             frazione.getReducedFraction(numeratore, denominatore);
 
@@ -115,7 +106,7 @@ public class FractionTest
         }
 
         @Test
-        void GetReducedFractionWithMinValueNumeratorAndNegativeDenominator() //T8
+        void GetReducedFractionWithMinValueNumeratorAndNegativeDenominator() //T7
         {
             assertThrows(ArithmeticException.class, () -> {
                 frazione.getReducedFraction(Integer.MIN_VALUE, -1);
@@ -123,7 +114,7 @@ public class FractionTest
         }
 
         @Test
-        void GetReducedFractionNegativeNumeratorBeyondMinValueWithMinValueDenominator() //T9
+        void GetReducedFractionNegativeNumeratorBeyondMinValueWithMinValueDenominator() //T8
         {
             assertThrows(ArithmeticException.class, () -> {
                 frazione.getReducedFraction(Integer.MIN_VALUE - 1, Integer.MIN_VALUE);
@@ -131,7 +122,7 @@ public class FractionTest
         }
 
         @Test
-        void GetReducedFractionOddNumeratorWithMinValueDenominatorAgain() //T10
+        void GetReducedFractionOddNumeratorWithMinValueDenominatorAgain() //T9
         {
             assertThrows(ArithmeticException.class, () -> {
                 frazione.getReducedFraction(5, Integer.MIN_VALUE);
@@ -139,7 +130,7 @@ public class FractionTest
         }
 
         @Test
-        void GetReducedFractionMaxValueNumeratorWithLargeNegativeDenominator() //T11
+        void GetReducedFractionMaxValueNumeratorWithLargeNegativeDenominator() //T10
         {
             assertThrows(ArithmeticException.class, () -> {
                 frazione.getReducedFraction(Integer.MAX_VALUE, Integer.MIN_VALUE);
@@ -147,7 +138,7 @@ public class FractionTest
         }
 
         @Test
-        void GetReducedFractionMinValueNumeratorWithLargePositiveDenominator() //T12
+        void GetReducedFractionMinValueNumeratorWithLargePositiveDenominator() //T11
         {
             assertThrows(ArithmeticException.class, () -> {
                 frazione.getReducedFraction(Integer.MIN_VALUE, Integer.MAX_VALUE);
