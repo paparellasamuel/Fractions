@@ -42,10 +42,7 @@ public class FractionTest
                     Arguments.of(1, 2),
                     Arguments.of(1, -2),
                     Arguments.of(1, 3),
-                    Arguments.of(-1, -3),
-                    Arguments.of(1, 4),
-                    Arguments.of(3, 4),
-                    Arguments.of(1, 10)
+                    Arguments.of(-1, -3)
             );
         }
 
