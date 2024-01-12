@@ -24,8 +24,17 @@ public class FractionTest
         {
             Fraction frazione1 = new Fraction(numeratore, denominatore);
 
-            assertEquals(numeratore, frazione1.getNumerator());
-            assertEquals(denominatore, frazione1.getDenominator());
+            int expectedNumerator = numeratore;
+            int expectedDenominator = denominatore;
+
+            if (denominatore < 0)
+            {
+                expectedNumerator = -numeratore;
+                expectedDenominator = -denominatore;
+            }
+
+            assertEquals(expectedNumerator, frazione1.getNumerator());
+            assertEquals(expectedDenominator, frazione1.getDenominator());
         }
 
         static Stream<Arguments> validFractionProvider() {
