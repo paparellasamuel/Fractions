@@ -57,8 +57,14 @@ public class FractionTest
         @Test
         void negativeDenominatorShouldThrowArithmeticException () //T3
         {
+            // First case: the numerator is Integer.MIN_VALUE
             assertThrows(ArithmeticException.class, () -> {
                 new Fraction(Integer.MIN_VALUE,-1);
+            });
+
+            // Second case: the denominator is Integer.MIN_VALUE
+            assertThrows(ArithmeticException.class, () -> {
+                new Fraction(1, Integer.MIN_VALUE);
             });
         }
 
