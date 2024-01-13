@@ -71,7 +71,7 @@ public class FractionTest
         void testIntegerOverflow () //T4
         {
             assertThrows(ArithmeticException.class, () -> {
-                new Fraction(Integer.MAX_VALUE,Integer.MAX_VALUE);
+                new Fraction(Integer.MAX_VALUE + 1,Integer.MAX_VALUE + 1);
             });
         }
 
@@ -79,7 +79,7 @@ public class FractionTest
         void testIntegerUnderFlow () //T5
         {
             assertThrows(ArithmeticException.class, () -> {
-                new Fraction(Integer.MIN_VALUE,Integer.MIN_VALUE);
+                new Fraction(Integer.MIN_VALUE - 1 ,Integer.MIN_VALUE - 1);
             });
         }
     }
