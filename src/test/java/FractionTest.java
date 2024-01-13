@@ -33,8 +33,7 @@ public class FractionTest
                 expectedDenominator = -denominatore;
             }
 
-            assertEquals(expectedNumerator, frazione1.getNumerator());
-            assertEquals(expectedDenominator, frazione1.getDenominator());
+            assertEquals(new Fraction(expectedNumerator, expectedDenominator), frazione1);
         }
 
         static Stream<Arguments> validFractionProvider() {

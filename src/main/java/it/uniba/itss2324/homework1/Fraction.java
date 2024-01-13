@@ -218,4 +218,27 @@ public final class Fraction
         } while (t != 0);
         return -u * (1 << k); // gcd is u*2^k
     }
+
+    /**
+     * Compares this fraction to another object to test if they are equal.
+     *
+     * <p>To be equal, both values must be equal. Thus 2/4 is not equal to 1/2.</p>
+     *
+     * @param obj the reference object with which to compare
+     * @return {@code true} if this object is equal
+     */
+    @Override
+    public boolean equals(final Object obj)
+    {
+        if (obj == this)
+        {
+            return true;
+        }
+        if (!(obj instanceof Fraction))
+        {
+            return false;
+        }
+        final Fraction other = (Fraction) obj;
+        return getNumerator() == other.getNumerator() && getDenominator() == other.getDenominator();
+    }
 }
