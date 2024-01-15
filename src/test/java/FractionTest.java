@@ -7,9 +7,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-import static it.uniba.itss2324.homework1.Fraction.ZERO;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FractionTest
 {
@@ -48,30 +46,24 @@ public class FractionTest
         @Test
         void denominatorZeroShouldThrowArithmeticException () //T2
         {
-            assertThrows(ArithmeticException.class, () -> {
-                new Fraction(1,0);
-            });
+            assertThrows(ArithmeticException.class, () -> new Fraction(1,0));
         }
 
         @Test
         void negativeDenominatorShouldThrowArithmeticException () //T3
         {
             // First case: the numerator is Integer.MIN_VALUE
-            assertThrows(ArithmeticException.class, () -> {
-                new Fraction(Integer.MIN_VALUE,-1);
-            });
+            assertThrows(ArithmeticException.class, () -> new Fraction(Integer.MIN_VALUE,-1));
 
             // Second case: the denominator is Integer.MIN_VALUE
-            assertThrows(ArithmeticException.class, () -> {
-                new Fraction(1, Integer.MIN_VALUE);
-            });
+            assertThrows(ArithmeticException.class, () -> new Fraction(1, Integer.MIN_VALUE));
         }
 
         @Test
         void testIntegerOverflow () //T4
         {
             assertThrows(ArithmeticException.class, () -> {
-                new Fraction(Integer.MAX_VALUE + 1,Integer.MAX_VALUE + 1);
+                new Fraction(Math.addExact(Integer.MAX_VALUE, 1), Math.addExact(Integer.MAX_VALUE, 1));
             });
         }
 
@@ -79,7 +71,35 @@ public class FractionTest
         void testIntegerUnderFlow () //T5
         {
             assertThrows(ArithmeticException.class, () -> {
-                new Fraction(Integer.MIN_VALUE - 1 ,Integer.MIN_VALUE - 1);
+                new Fraction(Math.subtractExact(Integer.MIN_VALUE, 1), Math.subtractExact(Integer.MIN_VALUE, 1));
+            });
+        }
+
+        @Test
+        void validFractionsWithinRange() //T6
+        {
+            assertDoesNotThrow(() -> {
+                new Fraction(Integer.MIN_VALUE, 1);
+            });
+            assertDoesNotThrow(() -> {
+                new Fraction(1, Integer.MAX_VALUE);
+            });
+            assertDoesNotThrow(() -> {
+                new Fraction(Integer.MAX_VALUE, 1);
+            });
+
+            // On point boundary cases
+            assertDoesNotThrow(() -> {
+                new Fraction(Integer.MIN_VALUE + 1, 1);
+            });
+            assertDoesNotThrow(() -> {
+                new Fraction(1, Integer.MAX_VALUE - 1);
+            });
+            assertDoesNotThrow(() -> {
+                new Fraction(Integer.MAX_VALUE - 1, 1);
+            });
+            assertDoesNotThrow(() -> {
+                new Fraction(1, Integer.MIN_VALUE + 1);
             });
         }
     }
@@ -95,7 +115,7 @@ public class FractionTest
 
         @ParameterizedTest
         @MethodSource("reducedFractionProvider")
-        void shouldReturnAValidReducedFraction(int numeratore, int denominatore) //T6
+        void shouldReturnAValidReducedFraction(int numeratore, int denominatore) //T7
         {
             frazione.getReducedFraction(numeratore, denominatore);
 
@@ -117,7 +137,7 @@ public class FractionTest
         }
 
         @Test
-        void GetReducedFractionWithMinValueNumeratorAndNegativeDenominator() //T7
+        void GetReducedFractionWithMinValueNumeratorAndNegativeDenominator() //T8
         {
             assertThrows(ArithmeticException.class, () -> {
                 frazione.getReducedFraction(Integer.MIN_VALUE, -1);
@@ -125,7 +145,7 @@ public class FractionTest
         }
 
         @Test
-        void GetReducedFractionNegativeNumeratorBeyondMinValueWithMinValueDenominator() //T8
+        void GetReducedFractionNegativeNumeratorBeyondMinValueWithMinValueDenominator() //T9
         {
             assertThrows(ArithmeticException.class, () -> {
                 frazione.getReducedFraction(Integer.MIN_VALUE - 1, Integer.MIN_VALUE);
@@ -133,7 +153,7 @@ public class FractionTest
         }
 
         @Test
-        void GetReducedFractionOddNumeratorWithMinValueDenominatorAgain() //T9
+        void GetReducedFractionOddNumeratorWithMinValueDenominatorAgain() //T10
         {
             assertThrows(ArithmeticException.class, () -> {
                 frazione.getReducedFraction(5, Integer.MIN_VALUE);
@@ -141,7 +161,7 @@ public class FractionTest
         }
 
         @Test
-        void GetReducedFractionMaxValueNumeratorWithLargeNegativeDenominator() //T10
+        void GetReducedFractionMaxValueNumeratorWithLargeNegativeDenominator() //T11
         {
             assertThrows(ArithmeticException.class, () -> {
                 frazione.getReducedFraction(Integer.MAX_VALUE, Integer.MIN_VALUE);
@@ -149,7 +169,7 @@ public class FractionTest
         }
 
         @Test
-        void GetReducedFractionMinValueNumeratorWithLargePositiveDenominator() //T11
+        void GetReducedFractionMinValueNumeratorWithLargePositiveDenominator() //T12
         {
             assertThrows(ArithmeticException.class, () -> {
                 frazione.getReducedFraction(Integer.MIN_VALUE, Integer.MAX_VALUE);

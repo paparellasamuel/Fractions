@@ -90,16 +90,6 @@ public final class Fraction
             denominator = -denominator;
         }
 
-        if (numerator == Integer.MAX_VALUE + 1 || denominator == Integer.MAX_VALUE + 1)
-        {
-            throw new ArithmeticException("Numerator or denominator too large to represent as an Integer.");
-        }
-
-        if (numerator == Integer.MIN_VALUE -1 || denominator == Integer.MIN_VALUE - 1)
-        {
-            throw new ArithmeticException("Numerator or denominator too small to represent as an Integer.");
-        }
-
         this.numerator = numerator;
         this.denominator = denominator;
     }
