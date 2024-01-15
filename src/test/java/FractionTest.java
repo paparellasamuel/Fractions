@@ -87,19 +87,37 @@ public class FractionTest
             assertDoesNotThrow(() -> {
                 new Fraction(Integer.MAX_VALUE, 1);
             });
+            assertDoesNotThrow(() -> {
+                new Fraction(Integer.MIN_VALUE, Integer.MAX_VALUE);
+            });
+            assertDoesNotThrow(() -> {
+                new Fraction(Integer.MAX_VALUE, Integer.MAX_VALUE);
+            });
 
             // On point boundary cases
             assertDoesNotThrow(() -> {
+                new Fraction(Integer.MIN_VALUE + 1, Integer.MIN_VALUE + 1);
+            });
+            assertDoesNotThrow(() -> {
                 new Fraction(Integer.MIN_VALUE + 1, 1);
+            });
+            assertDoesNotThrow(() -> {
+                new Fraction(Integer.MIN_VALUE + 1, Integer.MAX_VALUE - 1);
+            });
+            assertDoesNotThrow(() -> {
+                new Fraction(1, Integer.MIN_VALUE + 1);
             });
             assertDoesNotThrow(() -> {
                 new Fraction(1, Integer.MAX_VALUE - 1);
             });
             assertDoesNotThrow(() -> {
+                new Fraction(Integer.MAX_VALUE - 1, Integer.MIN_VALUE + 1);
+            });
+            assertDoesNotThrow(() -> {
                 new Fraction(Integer.MAX_VALUE - 1, 1);
             });
             assertDoesNotThrow(() -> {
-                new Fraction(1, Integer.MIN_VALUE + 1);
+                new Fraction(Integer.MAX_VALUE - 1, Integer.MAX_VALUE - 1);
             });
         }
     }
