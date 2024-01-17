@@ -18,20 +18,20 @@ public class FractionTest
     {
         @ParameterizedTest
         @MethodSource("validFractionProvider")
-        void shouldReturnAValidFraction(int numeratore, int denominatore) //T1
+        void shouldReturnAValidFraction(int numerator, int denominator) //T1
         {
-            Fraction frazione1 = new Fraction(numeratore, denominatore);
+            Fraction fraction1 = new Fraction(numerator, denominator);
 
-            int expectedNumerator = numeratore;
-            int expectedDenominator = denominatore;
+            int expectedNumerator = numerator;
+            int expectedDenominator = denominator;
 
-            if (denominatore < 0)
+            if (denominator < 0)
             {
-                expectedNumerator = -numeratore;
-                expectedDenominator = -denominatore;
+                expectedNumerator = -numerator;
+                expectedDenominator = -denominator;
             }
 
-            assertEquals(new Fraction(expectedNumerator, expectedDenominator), frazione1);
+            assertEquals(new Fraction(expectedNumerator, expectedDenominator), fraction1);
         }
 
         static Stream<Arguments> validFractionProvider()
@@ -60,17 +60,31 @@ public class FractionTest
             assertThrows(ArithmeticException.class, () -> new Fraction(1, Integer.MIN_VALUE));
         }
 
+        // The minimum necessary condition for overflow to occur is that the numerator or denominator is equal to Math.addExact(Integer.MAX_VALUE, 1)
         @Test
         void testIntegerOverflow() //T4
         {
+            assertThrows(ArithmeticException.class, () -> {
+                new Fraction(1, Math.addExact(Integer.MAX_VALUE, 1));
+            });
+            assertThrows(ArithmeticException.class, () -> {
+                new Fraction(Math.addExact(Integer.MAX_VALUE, 1), 1);
+            });
             assertThrows(ArithmeticException.class, () -> {
                 new Fraction(Math.addExact(Integer.MAX_VALUE, 1), Math.addExact(Integer.MAX_VALUE, 1));
             });
         }
 
+        // The minimum necessary condition for underflow to occur is that the numerator or denominator is equal to Math.subtractExact(Integer.MIN_VALUE, 1).
         @Test
         void testIntegerUnderFlow() //T5
         {
+            assertThrows(ArithmeticException.class, () -> {
+                new Fraction(1, Math.subtractExact(Integer.MIN_VALUE, 1));
+            });
+            assertThrows(ArithmeticException.class, () -> {
+                new Fraction(Math.subtractExact(Integer.MIN_VALUE, 1), 1);
+            });
             assertThrows(ArithmeticException.class, () -> {
                 new Fraction(Math.subtractExact(Integer.MIN_VALUE, 1), Math.subtractExact(Integer.MIN_VALUE, 1));
             });
