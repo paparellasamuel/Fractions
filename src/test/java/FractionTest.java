@@ -34,7 +34,8 @@ public class FractionTest
             assertEquals(new Fraction(expectedNumerator, expectedDenominator), frazione1);
         }
 
-        static Stream<Arguments> validFractionProvider() {
+        static Stream<Arguments> validFractionProvider()
+        {
             return Stream.of(
                     Arguments.of(1, 2),
                     Arguments.of(1, -2),
@@ -44,13 +45,13 @@ public class FractionTest
         }
 
         @Test
-        void denominatorZeroShouldThrowArithmeticException () //T2
+        void denominatorZeroShouldThrowArithmeticException() //T2
         {
             assertThrows(ArithmeticException.class, () -> new Fraction(1,0));
         }
 
         @Test
-        void negativeDenominatorShouldThrowArithmeticException () //T3
+        void negativeDenominatorShouldThrowArithmeticException() //T3
         {
             // First case: the numerator is Integer.MIN_VALUE
             assertThrows(ArithmeticException.class, () -> new Fraction(Integer.MIN_VALUE,-1));
@@ -60,7 +61,7 @@ public class FractionTest
         }
 
         @Test
-        void testIntegerOverflow () //T4
+        void testIntegerOverflow() //T4
         {
             assertThrows(ArithmeticException.class, () -> {
                 new Fraction(Math.addExact(Integer.MAX_VALUE, 1), Math.addExact(Integer.MAX_VALUE, 1));
@@ -68,57 +69,32 @@ public class FractionTest
         }
 
         @Test
-        void testIntegerUnderFlow () //T5
+        void testIntegerUnderFlow() //T5
         {
             assertThrows(ArithmeticException.class, () -> {
                 new Fraction(Math.subtractExact(Integer.MIN_VALUE, 1), Math.subtractExact(Integer.MIN_VALUE, 1));
             });
         }
 
-        @Test
-        void validFractionsWithinRange() //T6
+        @ParameterizedTest
+        @MethodSource("validFractionsWithinRangeProvider")
+        void validFractionsWithinRange(int numerator, int denominator) //T6
         {
-            assertDoesNotThrow(() -> {
-                new Fraction(Integer.MIN_VALUE, 1);
-            });
-            assertDoesNotThrow(() -> {
-                new Fraction(1, Integer.MAX_VALUE);
-            });
-            assertDoesNotThrow(() -> {
-                new Fraction(Integer.MAX_VALUE, 1);
-            });
-            assertDoesNotThrow(() -> {
-                new Fraction(Integer.MIN_VALUE, Integer.MAX_VALUE);
-            });
-            assertDoesNotThrow(() -> {
-                new Fraction(Integer.MAX_VALUE, Integer.MAX_VALUE);
-            });
+            assertDoesNotThrow(() -> new Fraction(numerator, denominator));
+        }
 
-            // On point boundary cases
-            assertDoesNotThrow(() -> {
-                new Fraction(Integer.MIN_VALUE + 1, Integer.MIN_VALUE + 1);
-            });
-            assertDoesNotThrow(() -> {
-                new Fraction(Integer.MIN_VALUE + 1, 1);
-            });
-            assertDoesNotThrow(() -> {
-                new Fraction(Integer.MIN_VALUE + 1, Integer.MAX_VALUE - 1);
-            });
-            assertDoesNotThrow(() -> {
-                new Fraction(1, Integer.MIN_VALUE + 1);
-            });
-            assertDoesNotThrow(() -> {
-                new Fraction(1, Integer.MAX_VALUE - 1);
-            });
-            assertDoesNotThrow(() -> {
-                new Fraction(Integer.MAX_VALUE - 1, Integer.MIN_VALUE + 1);
-            });
-            assertDoesNotThrow(() -> {
-                new Fraction(Integer.MAX_VALUE - 1, 1);
-            });
-            assertDoesNotThrow(() -> {
-                new Fraction(Integer.MAX_VALUE - 1, Integer.MAX_VALUE - 1);
-            });
+        static Stream<Arguments> validFractionsWithinRangeProvider()
+        {
+            return Stream.of(
+                    // 1st case: numerator = Integer.MIN_VALUE
+                    Arguments.of(Integer.MIN_VALUE, 1),
+                    Arguments.of(Integer.MIN_VALUE, Integer.MAX_VALUE),
+
+                    // 2nd case: numerator = Integer.MAX_VALUE
+                    Arguments.of(Integer.MAX_VALUE, - 1),
+                    Arguments.of(Integer.MAX_VALUE, 1),
+                    Arguments.of(Integer.MAX_VALUE, Integer.MAX_VALUE)
+            );
         }
     }
 
