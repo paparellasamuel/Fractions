@@ -159,6 +159,16 @@ public class FractionTest {
             Fraction result = Fraction.getReducedFraction(0, 5);
             assertEquals(Fraction.ZERO, result, "Zero numerator should return ZERO"); //T10
         }
+
+        @Test
+        void negativeDenominatorReducedShouldThrowArithmeticException() //T11
+        {
+            // First case: the numerator is Integer.MIN_VALUE
+            assertThrows(ArithmeticException.class, () -> Fraction.getReducedFraction(Integer.MIN_VALUE, -1));
+
+            // Second case: the denominator is Integer.MIN_VALUE
+            assertThrows(ArithmeticException.class, () -> Fraction.getReducedFraction(1, Integer.MIN_VALUE));
+        }
 /*
         @Test
         void GetReducedFractionWithMinValueNumeratorAndNegativeDenominator() //T8
