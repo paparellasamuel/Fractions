@@ -12,7 +12,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FractionTest
 {
     @org.junit.jupiter.api.Nested
-    class FractionConstructorTests {
+    class FractionConstructorTests
+    {
         @ParameterizedTest
         @MethodSource("validFractionProvider")
         void shouldReturnAValidFraction(int numerator, int denominator) //T1
@@ -124,7 +125,7 @@ public class FractionTest
             assertEquals(Fraction.getReducedFraction(numerator, denominator), new Fraction(expectedNumerator, expectedDenominator));
         }
 
-        public static Stream<Arguments> reducedFractionProvider() {
+        static Stream<Arguments> reducedFractionProvider() {
             return Stream.of(
                     Arguments.of(2, 4),
                     Arguments.of(2, -6),
@@ -146,7 +147,7 @@ public class FractionTest
             assertEquals(Fraction.getReducedFraction(numerator, denominator), new Fraction(numerator / 2, denominator / 2));
         }
 
-        public static Stream<Arguments> validEvenFractionProvider()
+        static Stream<Arguments> validEvenFractionProvider()
         {
             return Stream.of(
                     Arguments.of(2, Integer.MIN_VALUE),
