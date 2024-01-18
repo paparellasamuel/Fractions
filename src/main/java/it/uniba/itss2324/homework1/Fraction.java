@@ -131,7 +131,7 @@ public final class Fraction
      * @param v  a non-zero number
      * @return the greatest common divisor, never zero
      */
-    private static int greatestCommonDivisor(int u, int v)
+    public static int greatestCommonDivisor(int u, int v)
     {
         // From Commons Math:
         if (u == 0 || v == 0)

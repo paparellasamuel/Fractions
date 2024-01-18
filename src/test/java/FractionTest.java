@@ -9,7 +9,8 @@ import java.util.stream.Stream;
 import static it.uniba.itss2324.homework1.Fraction.greatestCommonDivisor;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class FractionTest {
+public class FractionTest
+{
     @org.junit.jupiter.api.Nested
     class FractionConstructorTests {
         @ParameterizedTest
@@ -113,14 +114,14 @@ public class FractionTest {
         @MethodSource("reducedFractionProvider")
         void shouldReturnAValidReducedFraction(int numerator, int denominator) //T7
         {
-            int numerator1 = numerator;
-            int denominator1 = denominator;
+            int expectedNumerator = numerator;
+            int expectedDenominator = denominator;
 
-            final int gcd = greatestCommonDivisor(numerator1, denominator1);
-            numerator1 = numerator1 / gcd;
-            denominator1 = denominator1 / gcd;
+            final int gcd = greatestCommonDivisor(expectedNumerator, expectedDenominator);
+            expectedNumerator = expectedNumerator / gcd;
+            expectedDenominator = expectedDenominator / gcd;
 
-            assertEquals(Fraction.getReducedFraction(numerator, denominator), new Fraction(numerator1, denominator1));
+            assertEquals(Fraction.getReducedFraction(numerator, denominator), new Fraction(expectedNumerator, expectedDenominator));
         }
 
         public static Stream<Arguments> reducedFractionProvider() {
@@ -139,14 +140,14 @@ public class FractionTest {
         }
 
         @ParameterizedTest
-        @MethodSource("reducedFractionProvider")
-        void ReturnAValidReducedFraction(int numerator, int denominator) //T9
+        @MethodSource("validEvenFractionProvider")
+        void validEvenNumeratorMIN_VALUE_Denominator(int numerator, int denominator) //T9
         {
-
-            assertEquals(Fraction.getReducedFraction(numerator, denominator), Fraction.getReducedFraction(numerator/2, denominator/2));
+            assertEquals(Fraction.getReducedFraction(numerator, denominator), new Fraction(numerator / 2, denominator / 2));
         }
 
-        public static Stream<Arguments> reducedFractionProvider1() {
+        public static Stream<Arguments> validEvenFractionProvider()
+        {
             return Stream.of(
                     Arguments.of(2, Integer.MIN_VALUE),
                     Arguments.of(-4, Integer.MIN_VALUE),
@@ -155,9 +156,9 @@ public class FractionTest {
         }
 
         @Test
-        public void testNumeratorZero() {
-            Fraction result = Fraction.getReducedFraction(0, 5);
-            assertEquals(Fraction.ZERO, result, "Zero numerator should return ZERO"); //T10
+        public void zeroNumeratorShouldReturnZERO() //T10
+        {
+            assertEquals(Fraction.ZERO, Fraction.getReducedFraction(0, 1));
         }
 
         @Test
@@ -169,45 +170,5 @@ public class FractionTest {
             // Second case: the denominator is Integer.MIN_VALUE
             assertThrows(ArithmeticException.class, () -> Fraction.getReducedFraction(1, Integer.MIN_VALUE));
         }
-/*
-        @Test
-        void GetReducedFractionWithMinValueNumeratorAndNegativeDenominator() //T8
-        {
-            assertThrows(ArithmeticException.class, () -> {
-                frazione.getReducedFraction(Integer.MIN_VALUE, -1);
-            });
-        }*/
-/*
-        @Test
-        void GetReducedFractionNegativeNumeratorBeyondMinValueWithMinValueDenominator() //T9
-        {
-            assertThrows(ArithmeticException.class, () -> {
-                frazione.getReducedFraction(Integer.MIN_VALUE - 1, Integer.MIN_VALUE);
-            });
-        }*/
-/*
-        @Test
-        void GetReducedFractionOddNumeratorWithMinValueDenominatorAgain() //T10
-        {
-            assertThrows(ArithmeticException.class, () -> {
-                frazione.getReducedFraction(5, Integer.MIN_VALUE);
-            });
-        }*/
-/*
-        @Test
-        void GetReducedFractionMaxValueNumeratorWithLargeNegativeDenominator() //T11
-        {
-            assertThrows(ArithmeticException.class, () -> {
-                frazione.getReducedFraction(Integer.MAX_VALUE, Integer.MIN_VALUE);
-            });
-        }*/
-/*
-        @Test
-        void GetReducedFractionMinValueNumeratorWithLargePositiveDenominator() //T12
-        {
-            assertThrows(ArithmeticException.class, () -> {
-                frazione.getReducedFraction(Integer.MIN_VALUE, Integer.MAX_VALUE);
-            });
-        }*/
-        }
     }
+}
