@@ -19,7 +19,7 @@ public final class Fraction
     /**
      * The numerator number part of the fraction
      */
-    private int numerator;
+    private final int numerator;
 
     /**
      * The getter for the numerator part of the fraction
@@ -29,17 +29,9 @@ public final class Fraction
     }
 
     /**
-     * The setter for the numerator part of the fraction
-     */
-    public void setNumerator(int numerator)
-    {
-        this.numerator = numerator;
-    }
-
-    /**
      * The denominator number part of the fraction
      */
-    private int denominator;
+    private final int denominator;
 
     /**
      * The getter for the denominator part of the fraction
@@ -47,17 +39,6 @@ public final class Fraction
     public int getDenominator ()
     {
         return denominator;
-    }
-
-    /**
-     * The setter for the denominator part of the fraction
-     */
-    public void setDenominator(int denominator)
-    {
-        if (denominator == 0) {
-            throw new ArithmeticException("The denominator must not be zero");
-        }
-        this.denominator = denominator;
     }
 
     /**

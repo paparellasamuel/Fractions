@@ -90,6 +90,8 @@ public class FractionTest
             });
         }
 
+        // The range values of the numerator is [Integer.MIN_VALUE, Integer.MAX_VALUE]
+        // while the range values of the denominator is [Integer.MIN_VALUE, -1] U [1, Integer.MAX_VALUE]
         @ParameterizedTest
         @MethodSource("validFractionsWithinRangeProvider")
         void validFractionsWithinRange(int numerator, int denominator) //T6
