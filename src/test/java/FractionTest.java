@@ -1,5 +1,6 @@
 import it.uniba.itss2324.homework1.Fraction;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -11,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class FractionTest
 {
-    @org.junit.jupiter.api.Nested
+    @Nested
     class FractionConstructorTests
     {
         @ParameterizedTest
@@ -88,7 +89,7 @@ public class FractionTest
             });
         }
 
-        // The range values of the numerator is [Integer.MIN_VALUE, Integer.MAX_VALUE]
+        // The range values of the numerator is [Integer.MIN_VALUE, Integer.MAX_VALUE],
         // while the range values of the denominator is [Integer.MIN_VALUE, -1] U [1, Integer.MAX_VALUE]
         @ParameterizedTest
         @MethodSource("validFractionsWithinRangeProvider")
@@ -112,7 +113,7 @@ public class FractionTest
         }
     }
 
-    @org.junit.jupiter.api.Nested
+    @Nested
     class GetReducedFractionMethodTests 
     {
         @ParameterizedTest
@@ -135,7 +136,8 @@ public class FractionTest
                     Arguments.of(2, 4),
                     Arguments.of(2, -6),
                     Arguments.of(-4, 6),
-                    Arguments.of(-6, -4)
+                    Arguments.of(-6, -4),
+                    Arguments.of(2, 2)
             );
         }
 
@@ -174,6 +176,78 @@ public class FractionTest
 
             // Second case: the denominator is Integer.MIN_VALUE
             assertThrows(ArithmeticException.class, () -> Fraction.getReducedFraction(1, Integer.MIN_VALUE));
+        }
+
+        // The minimum necessary condition for overflow to occur is that the numerator or denominator is equal to Math.addExact(Integer.MAX_VALUE, 1)
+        @Test
+        void testIntegerOverflow() //T12
+        {
+            assertThrows(ArithmeticException.class, () -> {
+                Fraction.getReducedFraction(1, Math.addExact(Integer.MAX_VALUE, 1));
+            });
+            assertThrows(ArithmeticException.class, () -> {
+                Fraction.getReducedFraction(Math.addExact(Integer.MAX_VALUE, 1), 1);
+            });
+            assertThrows(ArithmeticException.class, () -> {
+                Fraction.getReducedFraction(Math.addExact(Integer.MAX_VALUE, 1), Math.addExact(Integer.MAX_VALUE, 1));
+            });
+        }
+
+        // The minimum necessary condition for underflow to occur is that the numerator or denominator is equal to Math.subtractExact(Integer.MIN_VALUE, 1).
+        @Test
+        void testIntegerUnderFlow() //T13
+        {
+            assertThrows(ArithmeticException.class, () -> {
+                Fraction.getReducedFraction(1, Math.subtractExact(Integer.MIN_VALUE, 1));
+            });
+            assertThrows(ArithmeticException.class, () -> {
+                Fraction.getReducedFraction(Math.subtractExact(Integer.MIN_VALUE, 1), 1);
+            });
+            assertThrows(ArithmeticException.class, () -> {
+                Fraction.getReducedFraction(Math.subtractExact(Integer.MIN_VALUE, 1), Math.subtractExact(Integer.MIN_VALUE, 1));
+            });
+        }
+
+        // This test also verifies the method behavior with prime numbers
+        // 1 and 3 are indeed the first two prime numbers
+        @ParameterizedTest
+        @MethodSource("validOddFractionProvider")
+        void validOddNumeratorOddDenominatorFraction(int numerator, int denominator) //T14
+        {
+            assertEquals(Fraction.getReducedFraction(numerator, denominator), new Fraction(numerator, denominator));
+        }
+
+        static Stream<Arguments> validOddFractionProvider()
+        {
+            return Stream.of(
+                    Arguments.of(1, 3),
+                    Arguments.of(1, -3),
+                    Arguments.of(-1, 3),
+                    Arguments.of(-1, -3)
+            );
+        }
+
+        // The range values of the numerator is [Integer.MIN_VALUE, Integer.MAX_VALUE],
+        // while the range values of the denominator is [Integer.MIN_VALUE, -1] U [1, Integer.MAX_VALUE]
+        @ParameterizedTest
+        @MethodSource("validReducedFractionsWithinRangeProvider")
+        void validReducedFractionsWithinRange(int numerator, int denominator) //T15
+        {
+            assertDoesNotThrow(() -> Fraction.getReducedFraction(numerator, denominator));
+        }
+
+        static Stream<Arguments> validReducedFractionsWithinRangeProvider() 
+        {
+            return Stream.of(
+                    // 1st case: numerator = Integer.MIN_VALUE
+                    Arguments.of(Integer.MIN_VALUE, 1),
+                    Arguments.of(Integer.MIN_VALUE, Integer.MAX_VALUE),
+
+                    // 2nd case: numerator = Integer.MAX_VALUE
+                    Arguments.of(Integer.MAX_VALUE, -1),
+                    Arguments.of(Integer.MAX_VALUE, 1),
+                    Arguments.of(Integer.MAX_VALUE, Integer.MAX_VALUE)
+            );
         }
     }
 }
