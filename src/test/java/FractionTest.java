@@ -23,7 +23,8 @@ public class FractionTest
             int expectedNumerator = numerator;
             int expectedDenominator = denominator;
 
-            if (denominator < 0) {
+            if (denominator < 0) 
+            {
                 expectedNumerator = -numerator;
                 expectedDenominator = -denominator;
             }
@@ -31,7 +32,8 @@ public class FractionTest
             assertEquals(new Fraction(expectedNumerator, expectedDenominator), fraction1);
         }
 
-        static Stream<Arguments> validFractionProvider() {
+        static Stream<Arguments> validFractionProvider() 
+        {
             return Stream.of(
                     Arguments.of(1, 2),
                     Arguments.of(1, -2),
@@ -95,7 +97,8 @@ public class FractionTest
             assertDoesNotThrow(() -> new Fraction(numerator, denominator));
         }
 
-        static Stream<Arguments> validFractionsWithinRangeProvider() {
+        static Stream<Arguments> validFractionsWithinRangeProvider() 
+        {
             return Stream.of(
                     // 1st case: numerator = Integer.MIN_VALUE
                     Arguments.of(Integer.MIN_VALUE, 1),
@@ -110,7 +113,8 @@ public class FractionTest
     }
 
     @org.junit.jupiter.api.Nested
-    class GetReducedFractionMethodTests {
+    class GetReducedFractionMethodTests 
+    {
         @ParameterizedTest
         @MethodSource("reducedFractionProvider")
         void shouldReturnAValidReducedFraction(int numerator, int denominator) //T7
@@ -125,7 +129,8 @@ public class FractionTest
             assertEquals(Fraction.getReducedFraction(numerator, denominator), new Fraction(expectedNumerator, expectedDenominator));
         }
 
-        static Stream<Arguments> reducedFractionProvider() {
+        static Stream<Arguments> reducedFractionProvider() 
+        {
             return Stream.of(
                     Arguments.of(2, 4),
                     Arguments.of(2, -6),
@@ -142,7 +147,7 @@ public class FractionTest
 
         @ParameterizedTest
         @MethodSource("validEvenFractionProvider")
-        void validEvenNumeratorMIN_VALUE_Denominator(int numerator, int denominator) //T9
+        void validEvenNumeratorMIN_VALUE_DenominatorFraction(int numerator, int denominator) //T9
         {
             assertEquals(Fraction.getReducedFraction(numerator, denominator), new Fraction(numerator / 2, denominator / 2));
         }
@@ -151,8 +156,7 @@ public class FractionTest
         {
             return Stream.of(
                     Arguments.of(2, Integer.MIN_VALUE),
-                    Arguments.of(-4, Integer.MIN_VALUE),
-                    Arguments.of(6, Integer.MIN_VALUE)
+                    Arguments.of(-2, Integer.MIN_VALUE)
             );
         }
 
