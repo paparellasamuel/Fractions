@@ -105,9 +105,19 @@ public class FractionTest
             assertEquals(Fraction.ZERO, Fraction.getReducedFraction(0, 1));
         }
 
+        @Test
+        void negativeDenominatorShouldThrowArithmeticException() // T8, same test as T3
+        {
+            // First case: the numerator is Integer.MIN_VALUE
+            assertThrows(ArithmeticException.class, () -> Fraction.getReducedFraction(Integer.MIN_VALUE, -1));
+
+            // Second case: the denominator is Integer.MIN_VALUE
+            assertThrows(ArithmeticException.class, () -> Fraction.getReducedFraction(1, Integer.MIN_VALUE));
+        }
+
         @ParameterizedTest
         @MethodSource("validEvenFractionProvider")
-        void validEvenNumeratorMIN_VALUE_DenominatorFraction(int numerator, int denominator) // T8
+        void validEvenNumeratorMIN_VALUE_DenominatorFraction(int numerator, int denominator) // T9
         {
             assertEquals(new Fraction(numerator / 2, denominator / 2), Fraction.getReducedFraction(numerator, denominator));
         }
@@ -115,16 +125,16 @@ public class FractionTest
         static Stream<Arguments> validEvenFractionProvider()
         {
             return Stream.of(
-                    Arguments.of(2, Integer.MIN_VALUE), // T8.1
-                    Arguments.of(-2, Integer.MIN_VALUE) // T8.2
+                    Arguments.of(2, Integer.MIN_VALUE), // T9.1
+                    Arguments.of(-2, Integer.MIN_VALUE) // T9.2
             );
         }
 
-        // This test also verifies the method behavior with prime numbers
+        // This test also verifies the method behavior with prime numbers.
         // 1 and 3 are indeed the first two prime numbers
         @ParameterizedTest
         @MethodSource("validOddFractionProvider")
-        void validOddNumeratorOddDenominatorFraction(int numerator, int denominator) // T9
+        void validOddNumeratorOddDenominatorFraction(int numerator, int denominator) // T10
         {
             assertEquals(new Fraction(numerator, denominator), Fraction.getReducedFraction(numerator, denominator));
         }
@@ -132,10 +142,10 @@ public class FractionTest
         static Stream<Arguments> validOddFractionProvider()
         {
             return Stream.of(
-                    Arguments.of(1, 3), // T9.1
-                    Arguments.of(1, -3), // T9.2
-                    Arguments.of(-1, 3), // T9.3
-                    Arguments.of(-1, -3) // T9.4
+                    Arguments.of(1, 3), // T10.1
+                    Arguments.of(1, -3), // T10.2
+                    Arguments.of(-1, 3), // T10.3
+                    Arguments.of(-1, -3) // T10.4
             );
         }
 
@@ -143,7 +153,7 @@ public class FractionTest
         // while the range values of the denominator is [Integer.MIN_VALUE, -1] U [1, Integer.MAX_VALUE]
         @ParameterizedTest
         @MethodSource("validReducedFractionsWithinRangeProvider")
-        void validReducedFractionsWithinRange(int numerator, int denominator) // T10
+        void validReducedFractionsWithinRange(int numerator, int denominator) // T11
         {
             assertDoesNotThrow(() -> Fraction.getReducedFraction(numerator, denominator));
         }
@@ -152,13 +162,13 @@ public class FractionTest
         {
             return Stream.of(
                     // 1st case: numerator = Integer.MIN_VALUE
-                    Arguments.of(Integer.MIN_VALUE, 1), // T10.1
-                    Arguments.of(Integer.MIN_VALUE, Integer.MAX_VALUE), // T10.2
+                    Arguments.of(Integer.MIN_VALUE, 1), // T11.1
+                    Arguments.of(Integer.MIN_VALUE, Integer.MAX_VALUE), // T11.2
 
                     // 2nd case: numerator = Integer.MAX_VALUE
-                    Arguments.of(Integer.MAX_VALUE, -1), // T10.3
-                    Arguments.of(Integer.MAX_VALUE, 1), // T10.4
-                    Arguments.of(Integer.MAX_VALUE, Integer.MAX_VALUE) // T10.5
+                    Arguments.of(Integer.MAX_VALUE, -1), // T11.3
+                    Arguments.of(Integer.MAX_VALUE, 1), // T11.4
+                    Arguments.of(Integer.MAX_VALUE, Integer.MAX_VALUE) // T11.5
             );
         }
     }
