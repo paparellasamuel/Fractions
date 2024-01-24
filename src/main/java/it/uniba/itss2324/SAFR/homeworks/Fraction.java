@@ -1,4 +1,4 @@
-package it.uniba.itss2324.homework1;
+package it.uniba.itss2324.homeworks;
 
 /**
  * {@link Fraction} is a {@link Number} implementation that
