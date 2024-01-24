@@ -1,4 +1,4 @@
-import it.uniba.itss2324.homework1.Fraction;
+import it.uniba.itss2324.SAFR.homeworks.Fraction;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
