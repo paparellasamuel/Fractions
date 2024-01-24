@@ -24,7 +24,8 @@ public final class Fraction
     /**
      * The getter for the numerator part of the fraction
      */
-    public int getNumerator() {
+    public int getNumerator() 
+    {
         return numerator;
     }
 
