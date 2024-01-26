@@ -191,6 +191,12 @@ public class FractionTest
             assertEquals(2, Fraction.greatestCommonDivisor(-2, 4));
             assertEquals(2, Fraction.greatestCommonDivisor(2, -4));
             assertEquals(2, Fraction.greatestCommonDivisor(-2, -4));
+
+            // The GCD of two prime numbers that are not the same is 1
+            assertEquals(1, Fraction.greatestCommonDivisor(3, 5));
+            assertEquals(1, Fraction.greatestCommonDivisor(-3, 5));
+            assertEquals(1, Fraction.greatestCommonDivisor(3, -5));
+            assertEquals(1, Fraction.greatestCommonDivisor(-3, -5));
         }
         
         @Test
