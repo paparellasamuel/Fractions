@@ -223,6 +223,12 @@ public class FractionTest
             assertThrows(ArithmeticException.class, () -> {
                 Fraction.greatestCommonDivisor(Integer.MIN_VALUE, 0);
             });
+
+            // Third case: both u and v are Integer.MIN_VALUE.
+            // This triggers the condition at line 171
+            assertThrows(ArithmeticException.class, () -> {
+                Fraction.greatestCommonDivisor(Integer.MIN_VALUE, Integer.MIN_VALUE);
+            });
         }
 
         @Test
@@ -250,19 +256,20 @@ public class FractionTest
                 () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MIN_VALUE, 1)), // T16.4
 
                 () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MIN_VALUE, Integer.MAX_VALUE)), // T16.5
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, Integer.MIN_VALUE)), // T16.6
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, Integer.MIN_VALUE)), // T16.6                
+                () -> assertEquals(Integer.MAX_VALUE, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, Integer.MAX_VALUE)), // T16.7
 
                 // Test GCD with an even number and Integer.MIN_VALUE and Integer.MAX_VALUE
-                () -> assertEquals(2, Fraction.greatestCommonDivisor(2, Integer.MIN_VALUE)), // T16.7
-                () -> assertEquals(2, Fraction.greatestCommonDivisor(Integer.MIN_VALUE, 2)), // T16.8
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(2, Integer.MAX_VALUE)), // T16.9
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, 2)), // T16.10
+                () -> assertEquals(2, Fraction.greatestCommonDivisor(2, Integer.MIN_VALUE)), // T16.8
+                () -> assertEquals(2, Fraction.greatestCommonDivisor(Integer.MIN_VALUE, 2)), // T16.9
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(2, Integer.MAX_VALUE)), // T16.10
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, 2)), // T16.11
 
                 // Test GCD with an odd number and Integer.MIN_VALUE and Integer.MAX_VALUE
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(3, Integer.MIN_VALUE)), // T16.11
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MIN_VALUE, 3)), // T16.12
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(3, Integer.MAX_VALUE)), // T16.13
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, 3)) // T16.14
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(3, Integer.MIN_VALUE)), // T16.12
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MIN_VALUE, 3)), // T16.13
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(3, Integer.MAX_VALUE)), // T16.14
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, 3)) // T16.15
             );
         }
     }
