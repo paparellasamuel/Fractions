@@ -49,6 +49,7 @@ public class FractionTest
             assertThrows(ArithmeticException.class, () -> new Fraction(1, Integer.MIN_VALUE));
 
             //Other boundaries
+            assertThrows(ArithmeticException.class, () -> new Fraction(0, Integer.MIN_VALUE));
             assertThrows(ArithmeticException.class, () -> new Fraction(Integer.MIN_VALUE, Integer.MIN_VALUE));
             assertThrows(ArithmeticException.class, () -> new Fraction(Integer.MAX_VALUE, Integer.MIN_VALUE));
         }
@@ -63,6 +64,7 @@ public class FractionTest
             Fraction f3 = new Fraction(Integer.MAX_VALUE, -1);
             Fraction f4 = new Fraction(Integer.MAX_VALUE, 1);
             Fraction f5 = new Fraction(Integer.MAX_VALUE, Integer.MAX_VALUE);
+            Fraction f6 = new Fraction(0, Integer.MAX_VALUE);
 
             assertAll(
                 () -> assertEquals(Integer.MIN_VALUE, f1.getNumerator()), // T4.1
@@ -78,7 +80,10 @@ public class FractionTest
                 () -> assertEquals(1, f4.getDenominator()), // T4.4
 
                 () -> assertEquals(Integer.MAX_VALUE, f5.getNumerator()), // T4.5
-                () -> assertEquals(Integer.MAX_VALUE, f5.getDenominator()) // T4.5
+                () -> assertEquals(Integer.MAX_VALUE, f5.getDenominator()), // T4.5
+
+                () -> assertEquals(0, f6.getNumerator()), // T4.6
+                () -> assertEquals(Integer.MAX_VALUE, f6.getDenominator()) // T4.6
             );
         }
     }
