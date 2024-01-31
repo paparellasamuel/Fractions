@@ -192,16 +192,26 @@ public class FractionTest
         void shouldReturnCorrectGCD () // T12
         {
             // Classic GCD calculation
-            assertEquals(2, Fraction.greatestCommonDivisor(2, 4));
-            assertEquals(2, Fraction.greatestCommonDivisor(-2, 4));
-            assertEquals(2, Fraction.greatestCommonDivisor(2, -4));
-            assertEquals(2, Fraction.greatestCommonDivisor(-2, -4));
+            assertEquals(4, Fraction.greatestCommonDivisor(4, 8));
+            assertEquals(4, Fraction.greatestCommonDivisor(-4, 8));
+            assertEquals(4, Fraction.greatestCommonDivisor(8, -4));
+            assertEquals(4, Fraction.greatestCommonDivisor(-8, -4));
 
             // The GCD of two prime numbers that are not the same is 1
             assertEquals(1, Fraction.greatestCommonDivisor(3, 5));
             assertEquals(1, Fraction.greatestCommonDivisor(-3, 5));
             assertEquals(1, Fraction.greatestCommonDivisor(3, -5));
             assertEquals(1, Fraction.greatestCommonDivisor(-3, -5));
+
+            // GCD calculation between an even number and an odd number
+            assertEquals(1, Fraction.greatestCommonDivisor(2, 3));
+            assertEquals(1, Fraction.greatestCommonDivisor(-2, 3));
+            assertEquals(1, Fraction.greatestCommonDivisor(2, -3));
+            assertEquals(1, Fraction.greatestCommonDivisor(-2, -3));
+            assertEquals(1, Fraction.greatestCommonDivisor(3, 4));
+            assertEquals(1, Fraction.greatestCommonDivisor(-3, 4));
+            assertEquals(1, Fraction.greatestCommonDivisor(3, -4));
+            assertEquals(1, Fraction.greatestCommonDivisor(-3, -4));
         }
         
         @Test
