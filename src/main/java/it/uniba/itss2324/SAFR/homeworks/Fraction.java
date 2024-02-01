@@ -134,6 +134,12 @@ public final class Fraction
      */
     public static int greatestCommonDivisor(int u, int v)
     {
+        // if both operands are zero, throw new ArithmeticException
+        if (u == 0 && v == 0)
+        {
+            throw new ArithmeticException("u and v must not be zero numbers");
+        }
+        
         // From Commons Math:
         if (u == 0 || v == 0)
         {

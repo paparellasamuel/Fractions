@@ -49,9 +49,9 @@ public class FractionTest
             assertThrows(ArithmeticException.class, () -> new Fraction(1, Integer.MIN_VALUE));
 
             //Other boundaries
-            assertThrows(ArithmeticException.class, () -> new Fraction(0, Integer.MIN_VALUE));
             assertThrows(ArithmeticException.class, () -> new Fraction(Integer.MIN_VALUE, Integer.MIN_VALUE));
             assertThrows(ArithmeticException.class, () -> new Fraction(Integer.MAX_VALUE, Integer.MIN_VALUE));
+            assertThrows(ArithmeticException.class, () -> new Fraction(0, Integer.MIN_VALUE));
         }
 
         // The range values of the numerator is [Integer.MIN_VALUE, Integer.MAX_VALUE],
@@ -163,7 +163,7 @@ public class FractionTest
             // Second case: the denominator is Integer.MIN_VALUE
             assertThrows(ArithmeticException.class, () -> Fraction.getReducedFraction(1, Integer.MIN_VALUE));
 
-            //Other boundary
+            //Other boundaries
             assertThrows(ArithmeticException.class, () -> Fraction.getReducedFraction(Integer.MAX_VALUE, Integer.MIN_VALUE));
         }
 
@@ -204,10 +204,13 @@ public class FractionTest
             assertEquals(1, Fraction.greatestCommonDivisor(-3, -5));
 
             // GCD calculation between an even number and an odd number
+            // First case: u is even and v is odd
             assertEquals(1, Fraction.greatestCommonDivisor(2, 3));
             assertEquals(1, Fraction.greatestCommonDivisor(-2, 3));
             assertEquals(1, Fraction.greatestCommonDivisor(2, -3));
             assertEquals(1, Fraction.greatestCommonDivisor(-2, -3));
+
+            // Second case: u is odd and v is even
             assertEquals(1, Fraction.greatestCommonDivisor(3, 4));
             assertEquals(1, Fraction.greatestCommonDivisor(-3, 4));
             assertEquals(1, Fraction.greatestCommonDivisor(3, -4));
@@ -215,26 +218,34 @@ public class FractionTest
         }
         
         @Test
-        void gcdBetweenZeroAndIntNumber() // T13
+        void zeroOperandsShouldThrowArithmeticException() // T13
+        {
+            assertThrows(ArithmeticException.class, () -> Fraction.greatestCommonDivisor(0, 0));
+        }
+
+        @Test
+        void gcdBetweenZeroAndIntNumber() // T14
         {
             assertAll(
-                () -> assertEquals(2, Fraction.greatestCommonDivisor(0, 2)), // T13.1
-                () -> assertEquals(2, Fraction.greatestCommonDivisor(0, -2)), // T13.2
+                // First case: u is zero and v is an int number
+                () -> assertEquals(2, Fraction.greatestCommonDivisor(0, 2)), // T14.1
+                () -> assertEquals(2, Fraction.greatestCommonDivisor(0, -2)), // T14.2
 
-                () -> assertEquals(2, Fraction.greatestCommonDivisor(2, 0)), // T13.3
-                () -> assertEquals(2, Fraction.greatestCommonDivisor(-2, 0)) // T13.4
+                // Second case: u is an int number and v is zero
+                () -> assertEquals(2, Fraction.greatestCommonDivisor(2, 0)), // T14.3
+                () -> assertEquals(2, Fraction.greatestCommonDivisor(-2, 0)) // T14.4
             );
         }
 
         @Test
-        void testGCDOverflow() // T14
+        void testGCDOverflow() // T15
         {
-            // First case: u is 0 and v is Integer.MIN_VALUE
+            // First case: u is zero and v is Integer.MIN_VALUE
             assertThrows(ArithmeticException.class, () -> {
                 Fraction.greatestCommonDivisor(0, Integer.MIN_VALUE);
             });
 
-            // Second case: u is Integer.MIN_VALUE and v is 0
+            // Second case: u is Integer.MIN_VALUE and v is zero
             assertThrows(ArithmeticException.class, () -> {
                 Fraction.greatestCommonDivisor(Integer.MIN_VALUE, 0);
             });
@@ -247,44 +258,67 @@ public class FractionTest
         }
 
         @Test
-        void gdcBetweenOneAndIntNumber() // T15
+        void gdcBetweenOneAndIntNumber() // T16
         {
             assertAll(
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(1, 2)), // T15.1
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(-1, 2)), // T15.2
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(-1, -2)), // T15.3
+                // First case: u is one and v is an int number
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(1, 2)), // T16.1
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(-1, 2)), // T16.2
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(-1, -2)), // T16.3
 
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(2, 1)), // T15.4
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(-2, 1)), // T15.5
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(-2, -1)) // T15.6
+                // Second case: u is an int number and v is one
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(2, 1)), // T16.4
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(-2, 1)), // T16.5
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(-2, -1)), // T16.6
+
+                // Third case: both u and v are one
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(1, 1)), // T16.7
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(-1, 1)), // T16.8
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(-1, -1)) // T16.9
             );
         }
 
         @Test
-        void testGCDBoundaryValues() // T16
+        void testGCDBoundaryValues() // T17
         {
             assertAll(
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(1, Integer.MAX_VALUE)), // T16.1
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, 1)), // T16.2
+                // GCD calculation between one and Integer.MIN_VALUE
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(1, Integer.MIN_VALUE)), // T17.1
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MIN_VALUE, 1)), // T17.2
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(-1, Integer.MIN_VALUE)), // T17.3
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MIN_VALUE, -1)), // T17.4
+            
+                // GCD calculation between one and Integer.MAX_VALUE
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(1, Integer.MAX_VALUE)), // T17.5
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, 1)), // T17.6
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(-1, Integer.MAX_VALUE)), // T17.7
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, -1)), // T17.8
 
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(1, Integer.MIN_VALUE)), // T16.3
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MIN_VALUE, 1)), // T16.4
-
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MIN_VALUE, Integer.MAX_VALUE)), // T16.5
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, Integer.MIN_VALUE)), // T16.6                
-                () -> assertEquals(Integer.MAX_VALUE, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, Integer.MAX_VALUE)), // T16.7
+                // GCD calculation between Integer.MIN_VALUE and Integer.MAX_VALUE
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MIN_VALUE, Integer.MAX_VALUE)), // T17.9
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, Integer.MIN_VALUE)), // T17.10                
+                () -> assertEquals(Integer.MAX_VALUE, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, Integer.MAX_VALUE)), // T17.11
 
                 // Test GCD with an even number and Integer.MIN_VALUE and Integer.MAX_VALUE
-                () -> assertEquals(2, Fraction.greatestCommonDivisor(2, Integer.MIN_VALUE)), // T16.8
-                () -> assertEquals(2, Fraction.greatestCommonDivisor(Integer.MIN_VALUE, 2)), // T16.9
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(2, Integer.MAX_VALUE)), // T16.10
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, 2)), // T16.11
+                () -> assertEquals(2, Fraction.greatestCommonDivisor(2, Integer.MIN_VALUE)), // T17.12
+                () -> assertEquals(2, Fraction.greatestCommonDivisor(Integer.MIN_VALUE, 2)), // T17.13
+                () -> assertEquals(2, Fraction.greatestCommonDivisor(-2, Integer.MIN_VALUE)), // T17.14
+                () -> assertEquals(2, Fraction.greatestCommonDivisor(Integer.MIN_VALUE, -2)), // T17.15
+
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(2, Integer.MAX_VALUE)), // T17.16
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, 2)), // T17.17
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(-2, Integer.MAX_VALUE)), // T17.18
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, -2)), // T17.19
 
                 // Test GCD with an odd number and Integer.MIN_VALUE and Integer.MAX_VALUE
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(3, Integer.MIN_VALUE)), // T16.12
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MIN_VALUE, 3)), // T16.13
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(3, Integer.MAX_VALUE)), // T16.14
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, 3)) // T16.15
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(3, Integer.MIN_VALUE)), // T17.20
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MIN_VALUE, 3)), // T17.21
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(-3, Integer.MIN_VALUE)), // T17.22
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MIN_VALUE, -3)), // T17.23
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(3, Integer.MAX_VALUE)), // T17.24
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, 3)), // T17.25
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(-3, Integer.MAX_VALUE)), // T17.26
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, -3)) // T17.27
             );
         }
     }
