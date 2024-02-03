@@ -9,13 +9,26 @@ repositories {
     mavenCentral()
 }
 
+compileTestJava {
+    options.compilerArgs += '-parameters'
+}
+
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     implementation 'org.junit.jupiter:junit-jupiter:5.10.0'
-    implementation 'net.jqwik:jqwik:1.7.4'
+
+    testImplementation "net.jqwik:jqwik:1.7.4"
+    implementation 'net.jqwik:jqwik-api:1.7.4'
+    implementation 'net.jqwik:jqwik-time:1.7.4'
+    implementation 'net.jqwik:jqwik-web:1.7.4'
+    implementation 'net.jqwik:jqwik-engine:1.7.4'
+
+    compileOnly("org.jetbrains:annotations:23.0.0")
 }
 
 test {
-    useJUnitPlatform()
+    useJUnitPlatform() {
+        includeEngines 'jqwik'
+    }
 }

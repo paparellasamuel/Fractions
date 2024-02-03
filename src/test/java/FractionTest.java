@@ -19,7 +19,8 @@ public class FractionTest
         {
             Fraction f1 = new Fraction(1, 2);
             Fraction f2 = new Fraction(1, -2);
-            Fraction f3 = new Fraction(-1, -2);
+            Fraction f3 = new Fraction(-1, 2);
+            Fraction f4 = new Fraction(-1, -2);
 
             assertAll(
                 () -> assertEquals(1, f1.getNumerator()), // T1.1
@@ -28,8 +29,11 @@ public class FractionTest
                 () -> assertEquals(-1, f2.getNumerator()), // T1.2
                 () -> assertEquals(2, f2.getDenominator()), // T1.2
 
-                () -> assertEquals(1, f3.getNumerator()), // T1.3
-                () -> assertEquals(2, f3.getDenominator()) // T1.3
+                () -> assertEquals(-1, f3.getNumerator()), // T1.3
+                () -> assertEquals(2, f3.getDenominator()), // T1.3
+
+                () -> assertEquals(1, f4.getNumerator()), // T1.4
+                () -> assertEquals(2, f4.getDenominator()) // T1.4
             );
         }
 
