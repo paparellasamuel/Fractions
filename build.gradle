@@ -1,5 +1,14 @@
 plugins {
     id 'java'
+    id "org.sonarqube" version "4.4.1.3373"
+}
+
+sonar {
+  properties {
+    property "sonar.projectKey", "2023-mmqs-asef-org_safr-fractions"
+    property "sonar.organization", "2023-mmqs-asef-org"
+    property "sonar.host.url", "https://sonarcloud.io"
+  }
 }
 
 group = 'it.uniba.itss2324.SAFR.homeworks'
@@ -28,7 +37,5 @@ dependencies {
 }
 
 test {
-    useJUnitPlatform() {
-        includeEngines 'jqwik'
-    }
+    useJUnitPlatform()
 }

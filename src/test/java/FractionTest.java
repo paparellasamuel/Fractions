@@ -119,7 +119,7 @@ public class FractionTest
         }
 
         @Test
-        public void zeroNumeratorShouldReturnZEROConstant() // T7
+        void zeroNumeratorShouldReturnZEROConstant() // T7
         {
             assertEquals(Fraction.ZERO, Fraction.getReducedFraction(0, 1));
         }
@@ -282,47 +282,54 @@ public class FractionTest
             );
         }
 
-        @Test
-        void testGCDBoundaryValues() // T17
-        {
-            assertAll(
-                // GCD calculation between one and Integer.MIN_VALUE
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(1, Integer.MIN_VALUE)), // T17.1
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MIN_VALUE, 1)), // T17.2
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(-1, Integer.MIN_VALUE)), // T17.3
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MIN_VALUE, -1)), // T17.4
-            
-                // GCD calculation between one and Integer.MAX_VALUE
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(1, Integer.MAX_VALUE)), // T17.5
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, 1)), // T17.6
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(-1, Integer.MAX_VALUE)), // T17.7
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, -1)), // T17.8
+        @ParameterizedTest
+        @MethodSource("gcdBoundaryValuesProvider")
+        void testGCDBoundaryValues(int expected, int u, int v) {
+            assertEquals(expected, Fraction.greatestCommonDivisor(u, v));
+        }
 
-                // GCD calculation between Integer.MIN_VALUE and Integer.MAX_VALUE
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MIN_VALUE, Integer.MAX_VALUE)), // T17.9
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, Integer.MIN_VALUE)), // T17.10                
-                () -> assertEquals(Integer.MAX_VALUE, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, Integer.MAX_VALUE)), // T17.11
+        static Stream<Arguments> gcdBoundaryValuesProvider() {
+            return Stream.of(
+                    // GCD calculation between one and Integer.MIN_VALUE
+                    Arguments.of(1, 1, Integer.MIN_VALUE),
+                    Arguments.of(1, Integer.MIN_VALUE, 1),
+                    Arguments.of(1, -1, Integer.MIN_VALUE),
+                    Arguments.of(1, Integer.MIN_VALUE, -1),
 
-                // Test GCD with an even number and Integer.MIN_VALUE and Integer.MAX_VALUE
-                () -> assertEquals(2, Fraction.greatestCommonDivisor(2, Integer.MIN_VALUE)), // T17.12
-                () -> assertEquals(2, Fraction.greatestCommonDivisor(Integer.MIN_VALUE, 2)), // T17.13
-                () -> assertEquals(2, Fraction.greatestCommonDivisor(-2, Integer.MIN_VALUE)), // T17.14
-                () -> assertEquals(2, Fraction.greatestCommonDivisor(Integer.MIN_VALUE, -2)), // T17.15
+                    // GCD calculation between one and Integer.MAX_VALUE
+                    Arguments.of(1, 1, Integer.MAX_VALUE),
+                    Arguments.of(1, Integer.MAX_VALUE, 1),
+                    Arguments.of(1, -1, Integer.MAX_VALUE),
+                    Arguments.of(1, Integer.MAX_VALUE, -1),
 
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(2, Integer.MAX_VALUE)), // T17.16
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, 2)), // T17.17
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(-2, Integer.MAX_VALUE)), // T17.18
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, -2)), // T17.19
+                    // GCD calculation between Integer.MIN_VALUE and Integer.MAX_VALUE
+                    Arguments.of(1, Integer.MIN_VALUE, Integer.MAX_VALUE),
+                    Arguments.of(1, Integer.MAX_VALUE, Integer.MIN_VALUE),
+                    Arguments.of(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE),
 
-                // Test GCD with an odd number and Integer.MIN_VALUE and Integer.MAX_VALUE
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(3, Integer.MIN_VALUE)), // T17.20
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MIN_VALUE, 3)), // T17.21
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(-3, Integer.MIN_VALUE)), // T17.22
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MIN_VALUE, -3)), // T17.23
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(3, Integer.MAX_VALUE)), // T17.24
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, 3)), // T17.25
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(-3, Integer.MAX_VALUE)), // T17.26
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(Integer.MAX_VALUE, -3)) // T17.27
+                    // Test GCD with an even number and Integer.MIN_VALUE
+                    Arguments.of(2, 2, Integer.MIN_VALUE),
+                    Arguments.of(2, Integer.MIN_VALUE, 2),
+                    Arguments.of(2, -2, Integer.MIN_VALUE),
+                    Arguments.of(2, Integer.MIN_VALUE, -2),
+
+                    // Test GCD with an even number and Integer.MAX_VALUE
+                    Arguments.of(1, 2, Integer.MAX_VALUE),
+                    Arguments.of(1, Integer.MAX_VALUE, 2),
+                    Arguments.of(1, -2, Integer.MAX_VALUE),
+                    Arguments.of(1, Integer.MAX_VALUE, -2),
+
+                    // Test GCD with an odd number and Integer.MIN_VALUE
+                    Arguments.of(1, 3, Integer.MIN_VALUE),
+                    Arguments.of(1, Integer.MIN_VALUE, 3),
+                    Arguments.of(1, -3, Integer.MIN_VALUE),
+                    Arguments.of(1, Integer.MIN_VALUE, -3),
+
+                    // Test GCD with an odd number and Integer.MAX_VALUE
+                    Arguments.of(1, 3, Integer.MAX_VALUE),
+                    Arguments.of(1, Integer.MAX_VALUE, 3),
+                    Arguments.of(1, -3, Integer.MAX_VALUE),
+                    Arguments.of(1, Integer.MAX_VALUE, -3)
             );
         }
     }
