@@ -14,26 +14,22 @@ public class FractionTest
     @Nested
     class FractionConstructorTests
     {
-        @Test
-        void shouldReturnAValidFraction() // T1
+        @ParameterizedTest
+        @MethodSource("validFractionProvider")
+        void shouldReturnAValidFraction(Fraction fraction, int expectedNumerator, int expectedDenominator) // T1
         {
-            Fraction f1 = new Fraction(1, 2);
-            Fraction f2 = new Fraction(1, -2);
-            Fraction f3 = new Fraction(-1, 2);
-            Fraction f4 = new Fraction(-1, -2);
-
             assertAll(
-                () -> assertEquals(1, f1.getNumerator()), // T1.1
-                () -> assertEquals(2, f1.getDenominator()), // T1.1
+                    () -> assertEquals(expectedNumerator, fraction.getNumerator()),
+                    () -> assertEquals(expectedDenominator, fraction.getDenominator())
+            );
+        }
 
-                () -> assertEquals(-1, f2.getNumerator()), // T1.2
-                () -> assertEquals(2, f2.getDenominator()), // T1.2
-
-                () -> assertEquals(-1, f3.getNumerator()), // T1.3
-                () -> assertEquals(2, f3.getDenominator()), // T1.3
-
-                () -> assertEquals(1, f4.getNumerator()), // T1.4
-                () -> assertEquals(2, f4.getDenominator()) // T1.4
+        private static Stream<Arguments> validFractionProvider() {
+            return Stream.of(
+                    Arguments.of(new Fraction(1, 2), 1, 2), // T1.1
+                    Arguments.of(new Fraction(1, -2), -1, 2), // T1.2
+                    Arguments.of(new Fraction(-1, 2), -1, 2), // T1.3
+                    Arguments.of(new Fraction(-1, -2), 1, 2) // T1.4
             );
         }
 
@@ -52,48 +48,46 @@ public class FractionTest
             // Second case: the denominator is Integer.MIN_VALUE
             assertThrows(ArithmeticException.class, () -> new Fraction(1, Integer.MIN_VALUE));
 
+            // Third case: the numerator is zero
+            assertThrows(ArithmeticException.class, () -> new Fraction(0, Integer.MIN_VALUE));
+
             //Other boundaries
             assertThrows(ArithmeticException.class, () -> new Fraction(Integer.MIN_VALUE, Integer.MIN_VALUE));
             assertThrows(ArithmeticException.class, () -> new Fraction(Integer.MAX_VALUE, Integer.MIN_VALUE));
-            assertThrows(ArithmeticException.class, () -> new Fraction(0, Integer.MIN_VALUE));
         }
 
         // The range values of the numerator is [Integer.MIN_VALUE, Integer.MAX_VALUE],
         // while the range values of the denominator is [Integer.MIN_VALUE, -1] U [1, Integer.MAX_VALUE]
-        @Test
-        void validFractionsWithinRange() // T4
+        @ParameterizedTest
+        @MethodSource("fractionBoundaryValuesProvider")
+        void fractionBoundaryValues(Fraction fraction, int expectedNumerator, int expectedDenominator) // T4
         {
-            Fraction f1 = new Fraction(Integer.MIN_VALUE, 1);
-            Fraction f2 = new Fraction(Integer.MIN_VALUE, Integer.MAX_VALUE);
-            Fraction f3 = new Fraction(Integer.MAX_VALUE, -1);
-            Fraction f4 = new Fraction(Integer.MAX_VALUE, 1);
-            Fraction f5 = new Fraction(Integer.MAX_VALUE, Integer.MAX_VALUE);
-            Fraction f6 = new Fraction(0, Integer.MAX_VALUE);
-
             assertAll(
-                () -> assertEquals(Integer.MIN_VALUE, f1.getNumerator()), // T4.1
-                () -> assertEquals(1, f1.getDenominator()), // T4.1
+                    () -> assertEquals(expectedNumerator, fraction.getNumerator()),
+                    () -> assertEquals(expectedDenominator, fraction.getDenominator())
+            );
+        }
 
-                () -> assertEquals(Integer.MIN_VALUE, f2.getNumerator()), // T4.2
-                () -> assertEquals(Integer.MAX_VALUE, f2.getDenominator()), // T4.2
+        private static Stream<Arguments> fractionBoundaryValuesProvider()
+        {
+            return Stream.of(
+                    // First case: the numerator is Integer.MIN_VALUE
+                    Arguments.of(new Fraction(Integer.MIN_VALUE, 1), Integer.MIN_VALUE, 1),
+                    Arguments.of(new Fraction(Integer.MIN_VALUE, Integer.MAX_VALUE), Integer.MIN_VALUE, Integer.MAX_VALUE),
 
-                () -> assertEquals(-Integer.MAX_VALUE, f3.getNumerator()), // T4.3
-                () -> assertEquals(1, f3.getDenominator()), // T4.3
+                    // Second case: the numerator is Integer.MAX_VALUE
+                    Arguments.of(new Fraction(Integer.MAX_VALUE, -1), -Integer.MAX_VALUE, 1),
+                    Arguments.of(new Fraction(Integer.MAX_VALUE, 1), Integer.MAX_VALUE, 1),
+                    Arguments.of(new Fraction(Integer.MAX_VALUE, Integer.MAX_VALUE), Integer.MAX_VALUE, Integer.MAX_VALUE),
 
-                () -> assertEquals(Integer.MAX_VALUE, f4.getNumerator()), // T4.4
-                () -> assertEquals(1, f4.getDenominator()), // T4.4
-
-                () -> assertEquals(Integer.MAX_VALUE, f5.getNumerator()), // T4.5
-                () -> assertEquals(Integer.MAX_VALUE, f5.getDenominator()), // T4.5
-
-                () -> assertEquals(0, f6.getNumerator()), // T4.6
-                () -> assertEquals(Integer.MAX_VALUE, f6.getDenominator()) // T4.6
+                    // Third case: the numerator is zero
+                    Arguments.of(new Fraction(0, Integer.MAX_VALUE), 0, Integer.MAX_VALUE)
             );
         }
     }
 
     @Nested
-    class GetReducedFractionMethodTests 
+    class GetReducedFractionMethodTests
     {
         @Test
         void shouldReturnAValidReducedFraction() // T5
@@ -107,8 +101,12 @@ public class FractionTest
                 () -> assertEquals(new Fraction(-2, 3), Fraction.getReducedFraction(-4, 6)),
                 // T5.4, -6/-4 should return 3/2
                 () -> assertEquals(new Fraction(3, 2), Fraction.getReducedFraction(-6, -4)),
+                
                 // T5.5, 2/2 should return 1/1 or 1
-                () -> assertEquals(new Fraction (1, 1), Fraction.getReducedFraction(2, 2))
+                () -> assertEquals(new Fraction (1, 1), Fraction.getReducedFraction(2, 2)),
+                () -> assertEquals(new Fraction (-1, 1), Fraction.getReducedFraction(-2, 2)),
+                () -> assertEquals(new Fraction (-1, 1), Fraction.getReducedFraction(2, -2)),
+                () -> assertEquals(new Fraction (1, 1), Fraction.getReducedFraction(-2, -2))
             );
         }
 
@@ -174,14 +172,14 @@ public class FractionTest
         // The range values of the numerator is [Integer.MIN_VALUE, Integer.MAX_VALUE],
         // while the range values of the denominator is [Integer.MIN_VALUE, -1] U [1, Integer.MAX_VALUE]
         @Test
-        void validReducedFractionsWithinRange() // T11
+        void reducedFractionBoundaryValues() // T11
         {
             assertAll(
-            // First case: numerator = Integer.MIN_VALUE
-            () -> assertEquals(new Fraction(Integer.MIN_VALUE, 1), Fraction.getReducedFraction(Integer.MIN_VALUE, 1)),    
+            // First case: the numerator is Integer.MIN_VALUE
+            () -> assertEquals(new Fraction(Integer.MIN_VALUE, 1), Fraction.getReducedFraction(Integer.MIN_VALUE, 1)),
             () -> assertEquals(new Fraction(Integer.MIN_VALUE, Integer.MAX_VALUE), Fraction.getReducedFraction(Integer.MIN_VALUE, Integer.MAX_VALUE)),
-            
-            // Second case: numerator = Integer.MAX_VALUE
+
+            // Second case: the numerator is Integer.MAX_VALUE
             () -> assertEquals(new Fraction(-Integer.MAX_VALUE, 1), Fraction.getReducedFraction(Integer.MAX_VALUE, -1)),
             () -> assertEquals(new Fraction(Integer.MAX_VALUE, 1), Fraction.getReducedFraction(Integer.MAX_VALUE, 1)),
             () -> assertEquals(new Fraction(1, 1), Fraction.getReducedFraction(Integer.MAX_VALUE, Integer.MAX_VALUE))
@@ -220,7 +218,7 @@ public class FractionTest
             assertEquals(1, Fraction.greatestCommonDivisor(3, -4));
             assertEquals(1, Fraction.greatestCommonDivisor(-3, -4));
         }
-        
+
         @Test
         void zeroOperandsShouldThrowArithmeticException() // T13
         {
