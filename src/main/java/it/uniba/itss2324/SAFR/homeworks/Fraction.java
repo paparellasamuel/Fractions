@@ -43,6 +43,11 @@ public final class Fraction
     }
 
     /**
+     * Cached output hashCode (class is immutable).
+     */
+    private int hashCode;
+
+    /**
      * {@link Fraction} representation of 0.
      */
     public static final Fraction ZERO = new Fraction(0, 1);
@@ -211,6 +216,20 @@ public final class Fraction
             // |v| larger: t negative (replace v)
         } while (t != 0);
         return -u * (1 << k); // gcd is u*2^k
+    }
+
+    /**
+     * Gets a hashCode for the fraction.
+     *
+     * @return a hash code value for this object
+     */
+    @Override
+    public int hashCode() {
+        if (hashCode == 0) {
+            // hash code update should be atomic.
+            hashCode = 37 * (37 * 17 + getNumerator()) + getDenominator();
+        }
+        return hashCode;
     }
 
     /**
