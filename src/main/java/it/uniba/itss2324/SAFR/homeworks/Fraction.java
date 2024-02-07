@@ -60,7 +60,13 @@ public final class Fraction
         {
             throw new ArithmeticException("The denominator must not be zero");
         }
-
+        if (numerator == 0)
+        {
+            // normalize zero.
+            this.numerator = 0;
+            this.denominator = 1;
+            return;
+        }
         if (denominator < 0)
         {
             if (numerator == Integer.MIN_VALUE || denominator == Integer.MIN_VALUE)
