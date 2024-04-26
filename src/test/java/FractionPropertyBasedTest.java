@@ -13,15 +13,22 @@ public class FractionPropertyBasedTest
     @Property
     @Report(Reporting.GENERATED)
     @StatisticsReport(format = Histogram.class)
-    void reducedFractionCannotHaveZeroDenominator(@ForAll @IntRange(min = Integer.MIN_VALUE) int numerator,
-                                                  @ForAll @IntRange(min = Integer.MIN_VALUE) int denominator)
+    void invalidReducedFraction (@ForAll @IntRange(min = Integer.MIN_VALUE + 1) int numerator,
+                                 @ForAll @IntRange(min = Integer.MIN_VALUE + 1) int denominator)
     {
-        Assume.that((denominator != 0 && denominator != Integer.MIN_VALUE)
-                && (numerator != Integer.MIN_VALUE));
+        Assume.that(denominator != 0);
 
         Fraction reducedFraction = Fraction.getReducedFraction(numerator, denominator);
 
-        assertTrue(reducedFraction.getDenominator() != 0);
-    //  Statistics.collect();
+        assertAll(
+                () -> assertTrue(reducedFraction.getDenominator() != 0),
+                () -> assertTrue(reducedFraction.getNumerator() != Integer.MIN_VALUE),
+                () -> assertTrue(reducedFraction.getDenominator() != Integer.MIN_VALUE),
+                () -> assertTrue(reducedFraction.getNumerator() != Integer.MIN_VALUE &&
+                        reducedFraction.getDenominator() != Integer.MIN_VALUE)
+        );
+
+        Statistics.collect(denominator == -1 ? "-1" : "other values");
+        Statistics.collect(denominator == 1 ? "1" : "other values");
     }
 }
