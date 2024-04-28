@@ -37,7 +37,7 @@ public final class Fraction
     /**
      * The getter for the denominator part of the fraction
      */
-    public int getDenominator ()
+    public int getDenominator()
     {
         return denominator;
     }

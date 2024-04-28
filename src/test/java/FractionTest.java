@@ -209,7 +209,7 @@ public class FractionTest
     class GreatestCommonDivisorTests
     {
         @Test
-        void shouldReturnCorrectGCD () // T13
+        void shouldReturnCorrectGCD() // T13
         {
             // Classic GCD calculation
             assertEquals(4, Fraction.greatestCommonDivisor(4, 8));

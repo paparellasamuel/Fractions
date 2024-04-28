@@ -13,8 +13,18 @@ public class FractionPropertyBasedTest
     @Property
     @Report(Reporting.GENERATED)
     @StatisticsReport(format = Histogram.class)
-    void invalidReducedFraction (@ForAll @IntRange(min = Integer.MIN_VALUE + 1) int numerator,
-                                 @ForAll @IntRange(min = Integer.MIN_VALUE + 1) int denominator)
+    void invalidReducedFraction(@ForAll @IntRange() int numerator,
+                                @ForAll @IntRange() int denominator)
+    {
+
+    }
+
+    // PBT2
+    @Property
+    @Report(Reporting.GENERATED)
+    @StatisticsReport(format = Histogram.class)
+    void validReducedFraction(@ForAll @IntRange(min = Integer.MIN_VALUE + 1) int numerator,
+                               @ForAll @IntRange(min = Integer.MIN_VALUE + 1) int denominator)
     {
         Assume.that(denominator != 0);
 
