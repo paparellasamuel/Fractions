@@ -22,34 +22,38 @@ public class FractionPropertyBasedTest
     // PBT2
     @Property
     @Report(Reporting.GENERATED)
-    void validReducedFraction(@ForAll @IntRange(min = Integer.MIN_VALUE) int numerator,
-                               @ForAll @IntRange(min = Integer.MIN_VALUE) int denominator)
+    void reducedFractionMustNotHaveZeroDenominatorOrNumerator(
+            @ForAll @IntRange(min = Integer.MIN_VALUE + 1) int numerator,
+             @ForAll @IntRange(min = Integer.MIN_VALUE + 1) int denominator)
     {
         // First condition: the denominator must not be zero
-        Assume.that(denominator != 0);
-
         // Second condition: the numerator must not be zero
         // A fraction that has a zero numerator doesn't have any mathematical sense
-        Assume.that(numerator != 0);
+        Assume.that(denominator != 0 && numerator != 0);
 
+        assertDoesNotThrow(() -> Fraction.getReducedFraction(numerator, denominator));
+    }
+
+    // PBT3
+    @Property
+    @Report(Reporting.GENERATED)
+    void testValidNegativeReducedFraction(
+            @ForAll @IntRange(min = Integer.MIN_VALUE) int numerator,
+             @ForAll @IntRange(min = Integer.MIN_VALUE, max = -1) int denominator)
+    {
         /*
             Third condition: if the denominator is negative:
                1.1 it must not be Integer.MIN_VALUE;
                 1.2 the numerator must not be Integer.MIN_VALUE;
                  1.3 both do not have to be equal to Integer.MIN_VALUE;
-
-        Assume.that(denominator < 0 &&
-                // Combine numerator and denominator checks using logical AND
+        */
+        Assume.that(denominator < 0 && // Denominator is negative
+                // Combine remaining denominator and numerator checks
                 (denominator != Integer.MIN_VALUE && numerator != Integer.MIN_VALUE) ||
-                // Allow one to be Integer.MIN_VALUE but not both
-                (denominator == Integer.MIN_VALUE && (numerator % 2 == 0)));
+                (denominator == Integer.MIN_VALUE && (numerator != 0 && numerator % 2 == 0)));
 
-            Probably this condition here must be in an another PBT for equal value distribution
-         */
+        assertDoesNotThrow(() -> Fraction.getReducedFraction(numerator, denominator));
 
-        Fraction reducedFraction = Fraction.getReducedFraction(numerator, denominator);
-
-        Statistics.collect(denominator == -1 ? "-1" : "other values");
-        Statistics.collect(denominator == 1 ? "1" : "other values");
+        Statistics.collect(denominator == Integer.MIN_VALUE && numerator % 2 == 0);
     }
 }
