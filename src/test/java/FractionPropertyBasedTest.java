@@ -12,11 +12,11 @@ public class FractionPropertyBasedTest
     // PBT1
     @Property
     @Report(Reporting.GENERATED)
-    @StatisticsReport(format = Histogram.class)
-    void invalidReducedFraction(@ForAll @IntRange() int numerator,
-                                 @ForAll @IntRange() int denominator)
+    void testInvalidFractionZeroDenominator(@ForAll int numerator,
+                                             @ForAll @IntRange(max = 0) int denominator)
     {
-
+        // If the denominator is zero throw new arithmetic exception
+        assertThrows(ArithmeticException.class, () -> Fraction.getReducedFraction(numerator, denominator));
     }
 
     // PBT2
@@ -34,7 +34,24 @@ public class FractionPropertyBasedTest
         assertDoesNotThrow(() -> Fraction.getReducedFraction(numerator, denominator));
     }
 
-    // PBT3
+    //PBT3
+    @Property()
+    @Report(Reporting.GENERATED)
+    void test3(@ForAll @IntRange(min = Integer.MIN_VALUE) int numerator,
+               @ForAll @IntRange(min = Integer.MIN_VALUE, max = -1) int denominator)
+    {
+        /*
+            If the denominator is negative:
+             1. it can be Integer.MIN_VALUE;
+              2. the numerator can be Integer.MIN_VALUE;
+               3. both can be Integer.MIN_VALUE.
+         */
+        Assume.that(numerator == Integer.MIN_VALUE || denominator == Integer.MIN_VALUE);
+
+        assertThrows(ArithmeticException.class, () -> Fraction.getReducedFraction(numerator, denominator));
+    }
+
+    // PBT4
     @Property
     @Report(Reporting.GENERATED)
     void testValidNegativeReducedFraction(
@@ -45,7 +62,7 @@ public class FractionPropertyBasedTest
             Third condition: if the denominator is negative:
                1.1 it must not be Integer.MIN_VALUE;
                 1.2 the numerator must not be Integer.MIN_VALUE;
-                 1.3 both do not have to be equal to Integer.MIN_VALUE;
+                 1.3 both do not have to be equal to Integer.MIN_VALUE.
         */
         Assume.that(denominator < 0 && // Denominator is negative
                 // Combine remaining denominator and numerator checks
@@ -53,7 +70,5 @@ public class FractionPropertyBasedTest
                 (denominator == Integer.MIN_VALUE && (numerator != 0 && numerator % 2 == 0)));
 
         assertDoesNotThrow(() -> Fraction.getReducedFraction(numerator, denominator));
-
-        Statistics.collect(denominator == Integer.MIN_VALUE && numerator % 2 == 0);
     }
 }
