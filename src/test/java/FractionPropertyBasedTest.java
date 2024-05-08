@@ -12,7 +12,7 @@ public class FractionPropertyBasedTest
     // PBT1
     @Property
     @Report(Reporting.GENERATED)
-    void testInvalidFractionZeroDenominator(@ForAll int numerator,
+    void testInvalidFractionZeroDenominator(@ForAll @IntRange(min = Integer.MIN_VALUE) int numerator,
                                              @ForAll @IntRange(max = 0) int denominator)
     {
         // If the denominator is zero throw new arithmetic exception
@@ -37,7 +37,7 @@ public class FractionPropertyBasedTest
     //PBT3
     @Property()
     @Report(Reporting.GENERATED)
-    void test3(@ForAll @IntRange(min = Integer.MIN_VALUE) int numerator,
+    void testMIN_VALUEOverflowNegDenominator(@ForAll @IntRange(min = Integer.MIN_VALUE) int numerator,
                @ForAll @IntRange(min = Integer.MIN_VALUE, max = -1) int denominator)
     {
         /*
