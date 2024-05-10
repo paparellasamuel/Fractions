@@ -12,8 +12,9 @@ public class FractionPropertyBasedTest
     // PBT1
     @Property
     @Report(Reporting.GENERATED)
-    void testInvalidFractionZeroDenominator(@ForAll @IntRange(min = Integer.MIN_VALUE) int numerator,
-                                             @ForAll @IntRange(max = 0) int denominator)
+    void testInvalidFractionZeroDenominator(
+            @ForAll @IntRange(min = Integer.MIN_VALUE) int numerator,
+             @ForAll @IntRange(max = 0) int denominator)
     {
         // If the denominator is zero throw new arithmetic exception
         assertThrows(ArithmeticException.class, () -> Fraction.getReducedFraction(numerator, denominator));
@@ -37,21 +38,54 @@ public class FractionPropertyBasedTest
     //PBT3
     @Property()
     @Report(Reporting.GENERATED)
-    void testMIN_VALUEOverflowNegDenominator(@ForAll @IntRange(min = Integer.MIN_VALUE) int numerator,
-               @ForAll @IntRange(min = Integer.MIN_VALUE, max = -1) int denominator)
+    void testMIN_VALUEOverflowOddNumeratorMIN_VALUEDenominator(
+            @ForAll @IntRange(min = Integer.MIN_VALUE + 1) int numerator,
+             @ForAll @IntRange(min = Integer.MIN_VALUE, max = Integer.MIN_VALUE) int denominator)
     {
         /*
             If the denominator is negative:
              1. it can be Integer.MIN_VALUE;
-              2. the numerator can be Integer.MIN_VALUE;
-               3. both can be Integer.MIN_VALUE.
+
+              They can't both be Integer.MIN_VALUE because of this condition:
+              if (denominator == Integer.MIN_VALUE && (numerator & 1) == 0)
+              {
+                   numerator /= 2;
+                   denominator /= 2;
+              }
+
+               In this way we make sure that both are not odd numbers
          */
-        Assume.that(numerator == Integer.MIN_VALUE || denominator == Integer.MIN_VALUE);
+        Assume.that ((numerator & 1) != 0);
 
         assertThrows(ArithmeticException.class, () -> Fraction.getReducedFraction(numerator, denominator));
     }
 
     // PBT4
+    @Property
+    @Report(Reporting.GENERATED)
+    void testMIN_VALUEOverflowMIN_VALUENumeratorOddDenominator(
+            @ForAll @IntRange(min = Integer.MIN_VALUE, max = Integer.MIN_VALUE) int numerator,
+             @ForAll @IntRange(min = Integer.MIN_VALUE + 1, max = -1) int denominator)
+    {
+        /*
+            If the denominator is negative:
+             2. the numerator can be Integer.MIN_VALUE;
+
+              They can't both be Integer.MIN_VALUE because of this condition:
+              if (denominator == Integer.MIN_VALUE && (numerator & 1) == 0)
+              {
+                   numerator /= 2;
+                   denominator /= 2;
+              }
+
+               In this way we make sure that both are not odd numbers
+         */
+        Assume.that((denominator & 1 ) != 0);
+
+        assertThrows(ArithmeticException.class, () -> Fraction.getReducedFraction(numerator, denominator));
+    }
+
+    // PBT5
     @Property
     @Report(Reporting.GENERATED)
     void testValidNegativeReducedFraction(
