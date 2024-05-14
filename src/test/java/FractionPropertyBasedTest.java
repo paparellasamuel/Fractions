@@ -81,17 +81,18 @@ public class FractionPropertyBasedTest
              @ForAll @IntRange(min = Integer.MIN_VALUE, max = Integer.MIN_VALUE) int denominator)
     {
         /*
-            If the denominator is negative:
-             1. it can be Integer.MIN_VALUE;
+            First condition:
+             If the denominator is negative:
+              1. it can be Integer.MIN_VALUE;
 
-              They can't both be Integer.MIN_VALUE because of this condition:
-              if (denominator == Integer.MIN_VALUE && (numerator & 1) == 0)
-              {
-                   numerator /= 2;
-                   denominator /= 2;
-              }
+               They can't both be Integer.MIN_VALUE because of this condition:
+               if (denominator == Integer.MIN_VALUE && (numerator & 1) == 0)
+               {
+                    numerator /= 2;
+                    denominator /= 2;
+               }
 
-               In this way we make sure that both are not odd numbers
+                In this way we make sure that both are not odd numbers
          */
         Assume.that ((numerator & 1) != 0);
 
@@ -114,17 +115,18 @@ public class FractionPropertyBasedTest
              @ForAll @IntRange(min = Integer.MIN_VALUE + 1, max = -1) int denominator)
     {
         /*
-            If the denominator is negative:
-             2. the numerator can be Integer.MIN_VALUE;
+            Second condition:
+             If the denominator is negative:
+              2. the numerator can be Integer.MIN_VALUE;
 
-              They can't both be Integer.MIN_VALUE because of this condition:
-              if (denominator == Integer.MIN_VALUE && (numerator & 1) == 0)
-              {
-                   numerator /= 2;
-                   denominator /= 2;
-              }
+               They can't both be Integer.MIN_VALUE because of this condition:
+               if (denominator == Integer.MIN_VALUE && (numerator & 1) == 0)
+               {
+                    numerator /= 2;
+                    denominator /= 2;
+               }
 
-               In this way we make sure that both are not odd numbers
+                In this way we make sure that both are not odd numbers
          */
         Assume.that((denominator & 1 ) != 0);
 
@@ -142,20 +144,46 @@ public class FractionPropertyBasedTest
     // PBT5
     @Property
     @Report(Reporting.GENERATED)
+    @StatisticsReport(format = Histogram.class)
     void testValidNegativeReducedFraction(
-            @ForAll @IntRange(min = Integer.MIN_VALUE) int numerator,
-             @ForAll @IntRange(min = Integer.MIN_VALUE, max = -1) int denominator)
+            @ForAll @IntRange(min = Integer.MIN_VALUE + 1) int numerator,
+             @ForAll @IntRange(min = Integer.MIN_VALUE + 1, max = -1) int denominator)
     {
         /*
             Third condition: if the denominator is negative:
                1.1 it must not be Integer.MIN_VALUE;
                 1.2 the numerator must not be Integer.MIN_VALUE;
+                 1.3 the numerator must not be zero.
         */
-        Assume.that(denominator < 0 && // Denominator is negative
-                // Combine remaining denominator and numerator checks
-                (denominator != Integer.MIN_VALUE && numerator != Integer.MIN_VALUE) ||
-                (denominator == Integer.MIN_VALUE && (numerator != 0 && numerator % 2 == 0)));
-
+        Assume.that(numerator != 0);
         assertDoesNotThrow(() -> Fraction.getReducedFraction(numerator, denominator));
+
+        //Statistics:
+        Fraction reducedFraction = Fraction.getReducedFraction(numerator, denominator);
+
+        // Collect statistics on the distribution of numerators and denominators
+        Statistics.collect("Numerator", reducedFraction.getNumerator());
+        Statistics.collect("Denominator", reducedFraction.getDenominator());
+
+        // Collect statistics on the GCD of the input fractions
+        int gcd = Fraction.greatestCommonDivisor(Math.abs(numerator), Math.abs(denominator));
+        Statistics.collect("GCD", gcd);
+
+        /*
+            This block of code checks if the original fraction (numerator/denominator) is equal to
+            the reduced fraction.
+
+             The isEqual variable is set to true if both the numerator and denominator of the original
+             fraction are equal to those of the reduced fraction.
+         */
+        boolean isEqual = numerator == reducedFraction.getNumerator() && denominator == reducedFraction.getDenominator();
+
+        /*
+            This line collects the result of the equality check.
+
+             If isEqual is true, it means that the original fraction and the reduced fraction are the
+             same, otherwise it means that the original fraction and the reduced fraction are different.
+         */
+        Statistics.collect("Fraction Equality", isEqual);
     }
 }
