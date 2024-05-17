@@ -300,9 +300,9 @@ public class FractionTest
 
         @ParameterizedTest
         @MethodSource("gcdBoundaryValuesProvider")
-        void testGCDBoundaryValues(int expected, int u, int v) // T18
+        void testGCDBoundaryValues(int gcdExpected, int u, int v) // T18
         {
-            assertEquals(expected, Fraction.greatestCommonDivisor(u, v));
+            assertEquals(gcdExpected, Fraction.greatestCommonDivisor(u, v));
         }
 
         static Stream<Arguments> gcdBoundaryValuesProvider()
