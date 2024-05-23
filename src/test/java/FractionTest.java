@@ -42,7 +42,7 @@ public class FractionTest
         @Test
         void zeroNumeratorShouldReturnZero() // T3
         {
-            Fraction zero1 = new Fraction(0,1);
+            Fraction zero1 = new Fraction(0, 1);
             Fraction zero2 = new Fraction(0, -2);
 
             // First case: the denominator is one
