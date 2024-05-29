@@ -37,21 +37,30 @@ public class FractionTest
         void zeroDenominatorShouldThrowArithmeticException() // T2
         {
             assertThrows(ArithmeticException.class, () -> new Fraction(1, 0));
+
+            // Boundaries
+            // First case: numerator is Integer.MAX_VALUE
+            assertThrows(ArithmeticException.class, () -> new Fraction(Integer.MAX_VALUE, 0));
+
+            // Second case: numerator is Integer.MIN_VALUE
+            assertThrows(ArithmeticException.class, () -> new Fraction(Integer.MIN_VALUE, 0));
         }
 
         @Test
         void zeroNumeratorShouldReturnZero() // T3
         {
-            Fraction zero1 = new Fraction(0, 1);
-            Fraction zero2 = new Fraction(0, -2);
-
             // First case: the denominator is one
-            assertEquals(0, zero1.getNumerator());
-            assertEquals(1, zero1.getDenominator());
+            assertEquals(Fraction.ZERO, new Fraction(0, 1));
 
             // Second case: the denominator is minus two
-            assertEquals(0, zero2.getNumerator());
-            assertEquals(1, zero2.getDenominator());
+            assertEquals(Fraction.ZERO, new Fraction(0, -2));
+
+            // Boundaries
+            // First case: denominator is Integer.MAX_VALUE
+            assertEquals(Fraction.ZERO, new Fraction(0, Integer.MAX_VALUE));
+
+            // Second case: denominator is Integer.MIN_VALUE
+            assertEquals(Fraction.ZERO, new Fraction(0, Integer.MIN_VALUE));
         }
 
         @Test
@@ -124,7 +133,28 @@ public class FractionTest
                     Arguments.of(new Fraction(1, 1), 2, 2),
                     Arguments.of(new Fraction(-1, 1), -2, 2),
                     Arguments.of(new Fraction(-1, 1), 2, -2),
-                    Arguments.of(new Fraction(1, 1), -2, -2)
+                    Arguments.of(new Fraction(1, 1), -2, -2),
+
+                    // T6.6, odd numerator and odd denominator
+                    // This test also verifies the method behavior with prime numbers.
+                    // 1 and 3 are indeed the first two prime numbers
+                    Arguments.of(new Fraction(1, 3), 1, 3),
+                    Arguments.of(new Fraction(-1, 3), 1, -3),
+                    Arguments.of(new Fraction(-1, 3), -1, 3),
+                    Arguments.of(new Fraction(1, 3), -1, -3),
+
+                    // T6.7, odd numerator and even denominator
+                    Arguments.of(new Fraction(3, 4), 3, 4),
+                    Arguments.of(new Fraction(-3, 4), 3, -4),
+                    Arguments.of(new Fraction(-3, 4), -3, 4),
+                    Arguments.of(new Fraction(3, 4), -3, -4),
+
+                    // T6.8, even numerator and odd denominator
+                    Arguments.of(new Fraction(2, 3), 2, 3),
+                    Arguments.of(new Fraction(-2, 3), 2, -3),
+                    Arguments.of(new Fraction(-2, 3), -2, 3),
+                    Arguments.of(new Fraction(2, 3), -2, -3)
+
             );
         }
 
@@ -132,50 +162,30 @@ public class FractionTest
         void zeroDenominatorShouldThrowArithmeticException() // T7
         {
             assertThrows(ArithmeticException.class, () -> Fraction.getReducedFraction(1, 0));
+
+            // Boundaries
+            // First case: numerator is Integer.MAX_VALUE
+            assertThrows(ArithmeticException.class, () -> Fraction.getReducedFraction(Integer.MAX_VALUE, 0));
+
+            // Second case: numerator is Integer.MIN_VALUE
+            assertThrows(ArithmeticException.class, () -> Fraction.getReducedFraction(Integer.MIN_VALUE, 0));
         }
 
         @Test
         void zeroNumeratorShouldReturnZEROConstant() // T8
         {
             assertEquals(Fraction.ZERO, Fraction.getReducedFraction(0, 1));
-        }
 
-        @ParameterizedTest
-        @MethodSource("validEvenFractionProvider")
-        void validEvenNumeratorMIN_VALUE_DenominatorFraction(int numerator, int denominator) // T9
-        {
-            assertEquals(new Fraction(numerator / 2, denominator / 2), Fraction.getReducedFraction(numerator, denominator));
-        }
+            // Boundaries
+            // First case: denominator is Integer.MAX_VALUE
+            assertEquals(Fraction.ZERO, Fraction.getReducedFraction(0, Integer.MAX_VALUE));
 
-        static Stream<Arguments> validEvenFractionProvider()
-        {
-            return Stream.of(
-                    Arguments.of(2, Integer.MIN_VALUE), // T9.1
-                    Arguments.of(-2, Integer.MIN_VALUE) // T9.2
-            );
-        }
-
-        // This test also verifies the method behavior with prime numbers.
-        // 1 and 3 are indeed the first two prime numbers
-        @ParameterizedTest
-        @MethodSource("validOddFractionProvider")
-        void validOddNumeratorOddDenominatorFraction(int numerator, int denominator) // T10
-        {
-            assertEquals(new Fraction(numerator, denominator), Fraction.getReducedFraction(numerator, denominator));
-        }
-
-        static Stream<Arguments> validOddFractionProvider()
-        {
-            return Stream.of(
-                    Arguments.of(1, 3), // T10.1
-                    Arguments.of(1, -3), // T10.2
-                    Arguments.of(-1, 3), // T10.3
-                    Arguments.of(-1, -3) // T10.4
-            );
+            // Second case: denominator is Integer.MIN_VALUE
+            assertEquals(Fraction.ZERO, Fraction.getReducedFraction(0, Integer.MIN_VALUE));
         }
 
         @Test
-        void negativeDenominatorShouldThrowArithmeticException() // T11, same test as T4
+        void negativeDenominatorShouldThrowArithmeticException() // T9, same test as T4
         {
             // First case: the numerator is Integer.MIN_VALUE
             assertThrows(ArithmeticException.class, () -> Fraction.getReducedFraction(Integer.MIN_VALUE, -1));
@@ -190,7 +200,7 @@ public class FractionTest
         // The range values of the numerator is [Integer.MIN_VALUE, Integer.MAX_VALUE],
         // while the range values of the denominator is [Integer.MIN_VALUE, -1] U [1, Integer.MAX_VALUE]
         @Test
-        void reducedFractionBoundaryValues() // T12
+        void reducedFractionBoundaryValues() // T10
         {
             assertAll(
             // First case: the numerator is Integer.MIN_VALUE
@@ -209,7 +219,7 @@ public class FractionTest
     class GreatestCommonDivisorTests
     {
         @Test
-        void shouldReturnCorrectGCD() // T13
+        void shouldReturnCorrectGCD() // T11
         {
             // Classic GCD calculation
             assertEquals(4, Fraction.greatestCommonDivisor(4, 8));
@@ -238,27 +248,27 @@ public class FractionTest
         }
 
         @Test
-        void zeroOperandsShouldThrowArithmeticException() // T14
+        void zeroOperandsShouldThrowArithmeticException() // T12
         {
             assertThrows(ArithmeticException.class, () -> Fraction.greatestCommonDivisor(0, 0));
         }
 
         @Test
-        void gcdBetweenZeroAndIntNumber() // T15
+        void gcdBetweenZeroAndIntNumber() // T13
         {
             assertAll(
                 // First case: u is zero and v is an int number
-                () -> assertEquals(2, Fraction.greatestCommonDivisor(0, 2)), // T14.1
-                () -> assertEquals(2, Fraction.greatestCommonDivisor(0, -2)), // T14.2
+                () -> assertEquals(2, Fraction.greatestCommonDivisor(0, 2)), // T13.1
+                () -> assertEquals(2, Fraction.greatestCommonDivisor(0, -2)), // T13.2
 
                 // Second case: u is an int number and v is zero
-                () -> assertEquals(2, Fraction.greatestCommonDivisor(2, 0)), // T14.3
-                () -> assertEquals(2, Fraction.greatestCommonDivisor(-2, 0)) // T14.4
+                () -> assertEquals(2, Fraction.greatestCommonDivisor(2, 0)), // T13.3
+                () -> assertEquals(2, Fraction.greatestCommonDivisor(-2, 0)) // T13.4
             );
         }
 
         @Test
-        void testGCDOverflow() // T16
+        void testGCDOverflow() // T14
         {
             // First case: u is zero and v is Integer.MIN_VALUE
             assertThrows(ArithmeticException.class, () -> {
@@ -278,29 +288,29 @@ public class FractionTest
         }
 
         @Test
-        void gdcBetweenOneAndIntNumber() // T17
+        void gdcBetweenOneAndIntNumber() // T15
         {
             assertAll(
                 // First case: u is one and v is an int number
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(1, 2)), // T17.1
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(-1, 2)), // T17.2
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(-1, -2)), // T17.3
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(1, 2)), // T15.1
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(-1, 2)), // T15.2
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(-1, -2)), // T15.3
 
                 // Second case: u is an int number and v is one
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(2, 1)), // T17.4
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(-2, 1)), // T17.5
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(-2, -1)), // T17.6
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(2, 1)), // T15.4
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(-2, 1)), // T15.5
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(-2, -1)), // T15.6
 
                 // Third case: both u and v are one
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(1, 1)), // T17.7
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(-1, 1)), // T17.8
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(-1, -1)) // T17.9
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(1, 1)), // T15.7
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(-1, 1)), // T15.8
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(-1, -1)) // T15.9
             );
         }
 
         @ParameterizedTest
         @MethodSource("gcdBoundaryValuesProvider")
-        void testGCDBoundaryValues(int gcdExpected, int u, int v) // T18
+        void testGCDBoundaryValues(int gcdExpected, int u, int v) // T16
         {
             assertEquals(gcdExpected, Fraction.greatestCommonDivisor(u, v));
         }
