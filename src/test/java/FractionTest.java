@@ -38,11 +38,11 @@ public class FractionTest
         {
             assertThrows(ArithmeticException.class, () -> new Fraction(1, 0));
 
-            // Boundaries
-            // First case: numerator is Integer.MAX_VALUE
+            // Other cases:
+            // first case: numerator is Integer.MAX_VALUE
             assertThrows(ArithmeticException.class, () -> new Fraction(Integer.MAX_VALUE, 0));
 
-            // Second case: numerator is Integer.MIN_VALUE
+            // second case: numerator is Integer.MIN_VALUE
             assertThrows(ArithmeticException.class, () -> new Fraction(Integer.MIN_VALUE, 0));
         }
 
@@ -55,11 +55,11 @@ public class FractionTest
             // Second case: the denominator is minus two
             assertEquals(Fraction.ZERO, new Fraction(0, -2));
 
-            // Boundaries
-            // First case: denominator is Integer.MAX_VALUE
+            // Other cases:
+            // first case: denominator is Integer.MAX_VALUE
             assertEquals(Fraction.ZERO, new Fraction(0, Integer.MAX_VALUE));
 
-            // Second case: denominator is Integer.MIN_VALUE
+            // second case: denominator is Integer.MIN_VALUE
             assertEquals(Fraction.ZERO, new Fraction(0, Integer.MIN_VALUE));
         }
 
@@ -72,7 +72,8 @@ public class FractionTest
             // Second case: the denominator is Integer.MIN_VALUE
             assertThrows(ArithmeticException.class, () -> new Fraction(1, Integer.MIN_VALUE));
 
-            //Other boundaries
+            // Other cases: first both numerator and denominator are Integer.MIN_VALUE;
+            // second: the numerator is Integer.MAX_VALUE and the denominator is Integer.MIN_VALUE
             assertThrows(ArithmeticException.class, () -> new Fraction(Integer.MIN_VALUE, Integer.MIN_VALUE));
             assertThrows(ArithmeticException.class, () -> new Fraction(Integer.MAX_VALUE, Integer.MIN_VALUE));
         }
@@ -105,7 +106,7 @@ public class FractionTest
     }
 
     @Nested
-    class GetReducedFractionMethodTests
+    class GetReducedFractionTests
     {
         @ParameterizedTest
         @MethodSource("reducedFractionProvider")
@@ -163,11 +164,11 @@ public class FractionTest
         {
             assertThrows(ArithmeticException.class, () -> Fraction.getReducedFraction(1, 0));
 
-            // Boundaries
-            // First case: numerator is Integer.MAX_VALUE
+            // Other cases:
+            // first case: numerator is Integer.MAX_VALUE
             assertThrows(ArithmeticException.class, () -> Fraction.getReducedFraction(Integer.MAX_VALUE, 0));
 
-            // Second case: numerator is Integer.MIN_VALUE
+            // second case: numerator is Integer.MIN_VALUE
             assertThrows(ArithmeticException.class, () -> Fraction.getReducedFraction(Integer.MIN_VALUE, 0));
         }
 
@@ -176,11 +177,11 @@ public class FractionTest
         {
             assertEquals(Fraction.ZERO, Fraction.getReducedFraction(0, 1));
 
-            // Boundaries
-            // First case: denominator is Integer.MAX_VALUE
+            // Other cases:
+            // first case: denominator is Integer.MAX_VALUE
             assertEquals(Fraction.ZERO, Fraction.getReducedFraction(0, Integer.MAX_VALUE));
 
-            // Second case: denominator is Integer.MIN_VALUE
+            // second case: denominator is Integer.MIN_VALUE
             assertEquals(Fraction.ZERO, Fraction.getReducedFraction(0, Integer.MIN_VALUE));
         }
 
@@ -193,7 +194,7 @@ public class FractionTest
             // Second case: the denominator is Integer.MIN_VALUE
             assertThrows(ArithmeticException.class, () -> Fraction.getReducedFraction(1, Integer.MIN_VALUE));
 
-            //Other boundaries
+            // Other case
             assertThrows(ArithmeticException.class, () -> Fraction.getReducedFraction(Integer.MAX_VALUE, Integer.MIN_VALUE));
         }
 
