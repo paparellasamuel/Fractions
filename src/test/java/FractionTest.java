@@ -61,6 +61,12 @@ public class FractionTest
 
             // second case: denominator is Integer.MIN_VALUE
             assertEquals(Fraction.ZERO, new Fraction(0, Integer.MIN_VALUE));
+
+            //third case: denominator is Integer.MAX_VALUE - 1
+            assertEquals(Fraction.ZERO, new Fraction(0, Integer.MAX_VALUE - 1));
+
+            // fourth case: denominator is Integer.MIN_VALUE + 1
+            assertEquals(Fraction.ZERO, new Fraction(0, Integer.MIN_VALUE + 1));
         }
 
         @Test
@@ -183,6 +189,12 @@ public class FractionTest
 
             // second case: denominator is Integer.MIN_VALUE
             assertEquals(Fraction.ZERO, Fraction.getReducedFraction(0, Integer.MIN_VALUE));
+
+            //third case: denominator is Integer.MAX_VALUE - 1
+            assertEquals(Fraction.ZERO, Fraction.getReducedFraction(0, Integer.MAX_VALUE - 1));
+
+            // fourth case: denominator is Integer.MIN_VALUE + 1
+            assertEquals(Fraction.ZERO, Fraction.getReducedFraction(0, Integer.MIN_VALUE + 1));
         }
 
         @Test
