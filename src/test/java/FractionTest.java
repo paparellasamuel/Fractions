@@ -24,7 +24,8 @@ public class FractionTest
             );
         }
 
-        private static Stream<Arguments> validFractionProvider() {
+        private static Stream<Arguments> validFractionProvider()
+        {
             return Stream.of(
                     Arguments.of(new Fraction(1, 2), 1, 2), // T1.1
                     Arguments.of(new Fraction(1, -2), -1, 2), // T1.2
@@ -62,7 +63,7 @@ public class FractionTest
             // second case: denominator is Integer.MIN_VALUE
             assertEquals(Fraction.ZERO, new Fraction(0, Integer.MIN_VALUE));
 
-            //third case: denominator is Integer.MAX_VALUE - 1
+            // third case: denominator is Integer.MAX_VALUE - 1
             assertEquals(Fraction.ZERO, new Fraction(0, Integer.MAX_VALUE - 1));
 
             // fourth case: denominator is Integer.MIN_VALUE + 1
@@ -106,7 +107,19 @@ public class FractionTest
                     // Second case: the numerator is Integer.MAX_VALUE
                     Arguments.of(new Fraction(Integer.MAX_VALUE, -1), -Integer.MAX_VALUE, 1),
                     Arguments.of(new Fraction(Integer.MAX_VALUE, 1), Integer.MAX_VALUE, 1),
-                    Arguments.of(new Fraction(Integer.MAX_VALUE, Integer.MAX_VALUE), Integer.MAX_VALUE, Integer.MAX_VALUE)
+                    Arguments.of(new Fraction(Integer.MAX_VALUE, Integer.MAX_VALUE), Integer.MAX_VALUE, Integer.MAX_VALUE),
+
+                    // Third case: the numerator is Integer.MIN_VALUE + 1
+                    Arguments.of(new Fraction(Integer.MIN_VALUE + 1, Integer.MIN_VALUE + 1), -(Integer.MIN_VALUE + 1), -(Integer.MIN_VALUE + 1)),
+                    Arguments.of(new Fraction(Integer.MIN_VALUE + 1, -1), -(Integer.MIN_VALUE + 1), 1),
+                    Arguments.of(new Fraction(Integer.MIN_VALUE + 1, 1), Integer.MIN_VALUE + 1, 1),
+                    Arguments.of(new Fraction(Integer.MIN_VALUE + 1, Integer.MAX_VALUE - 1), Integer.MIN_VALUE + 1, Integer.MAX_VALUE - 1),
+
+                    // Fourth case: the numerator is Integer.MAX_VALUE - 1
+                    Arguments.of(new Fraction(Integer.MAX_VALUE - 1, Integer.MIN_VALUE + 1), -(Integer.MAX_VALUE - 1), -(Integer.MIN_VALUE + 1)),
+                    Arguments.of(new Fraction(Integer.MAX_VALUE - 1, -1), -(Integer.MAX_VALUE - 1), 1),
+                    Arguments.of(new Fraction(Integer.MAX_VALUE - 1, 1), Integer.MAX_VALUE - 1, 1),
+                    Arguments.of(new Fraction(Integer.MAX_VALUE - 1, Integer.MAX_VALUE - 1), Integer.MAX_VALUE - 1, Integer.MAX_VALUE - 1)
             );
         }
     }
@@ -190,15 +203,37 @@ public class FractionTest
             // second case: denominator is Integer.MIN_VALUE
             assertEquals(Fraction.ZERO, Fraction.getReducedFraction(0, Integer.MIN_VALUE));
 
-            //third case: denominator is Integer.MAX_VALUE - 1
+            // third case: denominator is Integer.MAX_VALUE - 1
             assertEquals(Fraction.ZERO, Fraction.getReducedFraction(0, Integer.MAX_VALUE - 1));
 
             // fourth case: denominator is Integer.MIN_VALUE + 1
             assertEquals(Fraction.ZERO, Fraction.getReducedFraction(0, Integer.MIN_VALUE + 1));
         }
 
+        @ParameterizedTest
+        @MethodSource("validEvenReducedFractionProvider")
+        void validEvenNumeratorMIN_VALUE_DenominatorReducedFraction(int numerator, int denominator) // T9
+        {
+            assertEquals(new Fraction(numerator / 2, denominator / 2), Fraction.getReducedFraction(numerator, denominator));
+        }
+
+        static Stream<Arguments> validEvenReducedFractionProvider()
+        {
+            return Stream.of(
+                    // First case: the numerator is a small even number, positive and negative
+                    Arguments.of(2, Integer.MIN_VALUE), // T9.1
+                    Arguments.of(-2, Integer.MIN_VALUE) ,// T9.2
+
+                    // Second case: the numerator is a large even number
+                    Arguments.of(Integer.MAX_VALUE - 1, Integer.MIN_VALUE), // T9.3
+
+                    // Third case: the numerator is a very small number
+                    Arguments.of(Integer.MIN_VALUE + 2, Integer.MIN_VALUE) // T9.4
+            );
+        }
+
         @Test
-        void negativeDenominatorShouldThrowArithmeticException() // T9, same test as T4
+        void negativeDenominatorShouldThrowArithmeticException() // T10, same test as T4
         {
             // First case: the numerator is Integer.MIN_VALUE
             assertThrows(ArithmeticException.class, () -> Fraction.getReducedFraction(Integer.MIN_VALUE, -1));
@@ -213,7 +248,7 @@ public class FractionTest
         // The range values of the numerator is [Integer.MIN_VALUE, Integer.MAX_VALUE],
         // while the range values of the denominator is [Integer.MIN_VALUE, -1] U [1, Integer.MAX_VALUE]
         @Test
-        void reducedFractionBoundaryValues() // T10
+        void reducedFractionBoundaryValues() // T11
         {
             assertAll(
             // First case: the numerator is Integer.MIN_VALUE
@@ -223,7 +258,19 @@ public class FractionTest
             // Second case: the numerator is Integer.MAX_VALUE
             () -> assertEquals(new Fraction(-Integer.MAX_VALUE, 1), Fraction.getReducedFraction(Integer.MAX_VALUE, -1)),
             () -> assertEquals(new Fraction(Integer.MAX_VALUE, 1), Fraction.getReducedFraction(Integer.MAX_VALUE, 1)),
-            () -> assertEquals(new Fraction(1, 1), Fraction.getReducedFraction(Integer.MAX_VALUE, Integer.MAX_VALUE))
+            () -> assertEquals(new Fraction(1, 1), Fraction.getReducedFraction(Integer.MAX_VALUE, Integer.MAX_VALUE)),
+
+            // Third case: the numerator is Integer.MIN_VALUE + 1
+            () -> assertEquals(new Fraction(1, 1), Fraction.getReducedFraction(Integer.MIN_VALUE + 1, Integer.MIN_VALUE + 1)),
+            () -> assertEquals(new Fraction(-(Integer.MIN_VALUE + 1), 1), Fraction.getReducedFraction(Integer.MIN_VALUE + 1, -1)),
+            () -> assertEquals(new Fraction(Integer.MIN_VALUE + 1, 1), Fraction.getReducedFraction(Integer.MIN_VALUE + 1, 1)),
+            () -> assertEquals(new Fraction(Integer.MIN_VALUE + 1, Integer.MAX_VALUE - 1), Fraction.getReducedFraction(Integer.MIN_VALUE + 1, Integer.MAX_VALUE - 1)),
+
+            // Fourth case: the numerator is Integer.MAX_VALUE - 1
+            () -> assertEquals(new Fraction(Integer.MAX_VALUE - 1, Integer.MIN_VALUE + 1), Fraction.getReducedFraction(Integer.MAX_VALUE - 1, Integer.MIN_VALUE + 1)),
+            () -> assertEquals(new Fraction(-(Integer.MAX_VALUE - 1), 1), Fraction.getReducedFraction(Integer.MAX_VALUE - 1, -1)),
+            () -> assertEquals(new Fraction(Integer.MAX_VALUE - 1, 1), Fraction.getReducedFraction(Integer.MAX_VALUE - 1, 1)),
+            () -> assertEquals(new Fraction(1, 1), Fraction.getReducedFraction(Integer.MAX_VALUE - 1, Integer.MAX_VALUE - 1))
             );
         }
     }
@@ -232,7 +279,7 @@ public class FractionTest
     class GreatestCommonDivisorTests
     {
         @Test
-        void shouldReturnCorrectGCD() // T11
+        void shouldReturnCorrectGCD() // T12
         {
             // Classic GCD calculation
             assertEquals(4, Fraction.greatestCommonDivisor(4, 8));
@@ -261,27 +308,27 @@ public class FractionTest
         }
 
         @Test
-        void zeroOperandsShouldThrowArithmeticException() // T12
+        void zeroOperandsShouldThrowArithmeticException() // T13
         {
             assertThrows(ArithmeticException.class, () -> Fraction.greatestCommonDivisor(0, 0));
         }
 
         @Test
-        void gcdBetweenZeroAndIntNumber() // T13
+        void gcdBetweenZeroAndIntNumber() // T14
         {
             assertAll(
                 // First case: u is zero and v is an int number
-                () -> assertEquals(2, Fraction.greatestCommonDivisor(0, 2)), // T13.1
-                () -> assertEquals(2, Fraction.greatestCommonDivisor(0, -2)), // T13.2
+                () -> assertEquals(2, Fraction.greatestCommonDivisor(0, 2)), // T14.1
+                () -> assertEquals(2, Fraction.greatestCommonDivisor(0, -2)), // T14.2
 
                 // Second case: u is an int number and v is zero
-                () -> assertEquals(2, Fraction.greatestCommonDivisor(2, 0)), // T13.3
-                () -> assertEquals(2, Fraction.greatestCommonDivisor(-2, 0)) // T13.4
+                () -> assertEquals(2, Fraction.greatestCommonDivisor(2, 0)), // T14.3
+                () -> assertEquals(2, Fraction.greatestCommonDivisor(-2, 0)) // T14.4
             );
         }
 
         @Test
-        void testGCDOverflow() // T14
+        void testGCDOverflow() // T15
         {
             // First case: u is zero and v is Integer.MIN_VALUE
             assertThrows(ArithmeticException.class, () -> {
@@ -301,31 +348,31 @@ public class FractionTest
         }
 
         @Test
-        void gdcBetweenOneAndIntNumber() // T15
+        void gdcBetweenOneAndIntNumber() // T16
         {
             assertAll(
                 // First case: u is one and v is an int number
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(1, 2)), // T15.1
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(-1, 2)), // T15.2
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(-1, -2)), // T15.3
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(1, 2)), // T16.1
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(-1, 2)), // T16.2
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(-1, -2)), // T16.3
 
                 // Second case: u is an int number and v is one
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(2, 1)), // T15.4
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(-2, 1)), // T15.5
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(-2, -1)), // T15.6
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(2, 1)), // T16.4
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(-2, 1)), // T16.5
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(-2, -1)), // T16.6
 
                 // Third case: both u and v are one
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(1, 1)), // T15.7
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(-1, 1)), // T15.8
-                () -> assertEquals(1, Fraction.greatestCommonDivisor(-1, -1)) // T15.9
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(1, 1)), // T16.7
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(-1, 1)), // T16.8
+                () -> assertEquals(1, Fraction.greatestCommonDivisor(-1, -1)) // T16.9
             );
         }
 
         @ParameterizedTest
         @MethodSource("gcdBoundaryValuesProvider")
-        void testGCDBoundaryValues(int gcdExpected, int u, int v) // T16
+        void testGCDBoundaryValues(int expectedGCD, int u, int v) // T17
         {
-            assertEquals(gcdExpected, Fraction.greatestCommonDivisor(u, v));
+            assertEquals(expectedGCD, Fraction.greatestCommonDivisor(u, v));
         }
 
         static Stream<Arguments> gcdBoundaryValuesProvider()
@@ -370,7 +417,19 @@ public class FractionTest
                     Arguments.of(1, 3, Integer.MAX_VALUE),
                     Arguments.of(1, Integer.MAX_VALUE, 3),
                     Arguments.of(1, -3, Integer.MAX_VALUE),
-                    Arguments.of(1, Integer.MAX_VALUE, -3)
+                    Arguments.of(1, Integer.MAX_VALUE, -3),
+
+                    // Test GCD with Integer.MIN_VALUE + 1
+                    Arguments.of(-(Integer.MIN_VALUE + 1), Integer.MIN_VALUE + 1, Integer.MIN_VALUE + 1),
+                    Arguments.of(1, Integer.MIN_VALUE + 1, -1),
+                    Arguments.of(1, Integer.MIN_VALUE + 1, 1),
+                    Arguments.of(1, Integer.MIN_VALUE + 1, Integer.MAX_VALUE - 1),
+
+                    // Test GCD with Integer.MAX_VALUE - 1
+                    Arguments.of(1, Integer.MAX_VALUE - 1, Integer.MIN_VALUE + 1),
+                    Arguments.of(1, Integer.MAX_VALUE - 1, -1),
+                    Arguments.of(1, Integer.MAX_VALUE - 1, 1),
+                    Arguments.of(Integer.MAX_VALUE - 1, Integer.MAX_VALUE - 1, Integer.MAX_VALUE - 1)
             );
         }
     }
