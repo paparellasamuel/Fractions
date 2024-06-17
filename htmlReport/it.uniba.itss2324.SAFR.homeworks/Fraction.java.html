@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Fraction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tests in 'Fractions.test' Coverage Results</a> &gt; <a href="index.source.html" class="el_package">it.uniba.itss2324.SAFR.homeworks</a> &gt; <span class="el_source">Fraction.java</span></div><h1>Fraction.java</h1><pre class="source lang-java linenums">package it.uniba.itss2324.SAFR.homeworks;
+
+/**
+ * {@link Fraction} is a {@link Number} implementation that
+ * stores fractions accurately.
+ *
+ * &lt;p&gt;This class is immutable, and interoperable with most methods that accept
+ * a {@link Number}.&lt;/p&gt;
+ *
+ * &lt;p&gt;Note that this class is intended for common use cases, it is &lt;i&gt;int&lt;/i&gt;
+ * based and thus suffers from various overflow issues. For a BigInteger based
+ * equivalent, please see the Commons Math BigFraction class.&lt;/p&gt;
+ *
+ * @since 2.0
+ */
+
+public final class Fraction
+{
+    /**
+     * The numerator number part of the fraction
+     */
+    private final int numerator;
+
+    /**
+     * The getter for the numerator part of the fraction
+     */
+    public int getNumerator() 
+    {
+<span class="fc" id="L29">        return numerator;</span>
+    }
+
+    /**
+     * The denominator number part of the fraction
+     */
+    private final int denominator;
+
+    /**
+     * The getter for the denominator part of the fraction
+     */
+    public int getDenominator()
+    {
+<span class="fc" id="L42">        return denominator;</span>
+    }
+
+    /**
+     * Cached output hashCode (class is immutable).
+     */
+    private int hashCode;
+
+    /**
+     * {@link Fraction} representation of 0.
+     */
+<span class="fc" id="L53">    public static final Fraction ZERO = new Fraction(0, 1);</span>
+
+    /**
+     * Constructs a {@link Fraction} instance with the 2 parts
+     * of a fraction Y/Z.
+     *
+     * @param numerator  the numerator, for example the three in 'three sevenths'
+     * @param denominator  the denominator, for example the seven in 'three sevenths'
+     */
+    public Fraction(int numerator, int denominator)
+<span class="fc" id="L63">    {</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        if (denominator == 0)</span>
+        {
+<span class="fc" id="L66">            throw new ArithmeticException(&quot;The denominator must not be zero&quot;);</span>
+        }
+<span class="fc bfc" id="L68" title="All 2 branches covered.">        if (numerator == 0)</span>
+        {
+            // normalize zero.
+<span class="fc" id="L71">            this.numerator = 0;</span>
+<span class="fc" id="L72">            this.denominator = 1;</span>
+<span class="fc" id="L73">            return;</span>
+        }
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        if (denominator &lt; 0)</span>
+        {
+<span class="fc bfc" id="L77" title="All 4 branches covered.">            if (numerator == Integer.MIN_VALUE || denominator == Integer.MIN_VALUE)</span>
+            {
+<span class="fc" id="L79">                throw new ArithmeticException(&quot;overflow: can't negate&quot;);</span>
+            }
+
+<span class="fc" id="L82">            numerator = -numerator;</span>
+<span class="fc" id="L83">            denominator = -denominator;</span>
+        }
+
+<span class="fc" id="L86">        this.numerator = numerator;</span>
+<span class="fc" id="L87">        this.denominator = denominator;</span>
+<span class="fc" id="L88">    }</span>
+
+    /**
+     * Creates a reduced {@link Fraction} instance with the 2 parts
+     * of a fraction Y/Z.
+     *
+     * &lt;p&gt;For example, if the input parameters represent 2/4, then the created
+     * fraction will be 1/2.&lt;/p&gt;
+     *
+     * &lt;p&gt;Any negative signs are resolved to be on the numerator.&lt;/p&gt;
+     *
+     * @param numerator  the numerator, for example the three in 'three sevenths'
+     * @param denominator  the denominator, for example the seven in 'three sevenths'
+     * @return a new fraction instance, with the numerator and denominator reduced
+     * @throws ArithmeticException if the denominator is {@code zero}
+     */
+    public static Fraction getReducedFraction(int numerator, int denominator)
+    {
+<span class="fc bfc" id="L106" title="All 2 branches covered.">        if (denominator == 0)</span>
+        {
+<span class="fc" id="L108">            throw new ArithmeticException(&quot;The denominator must not be zero&quot;);</span>
+        }
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        if (numerator == 0)</span>
+        {
+<span class="fc" id="L112">            return ZERO; // normalize zero.</span>
+        }
+        // allow 2^k/-2^31 as a valid fraction (where k&gt;0)
+<span class="fc bfc" id="L115" title="All 4 branches covered.">        if (denominator == Integer.MIN_VALUE &amp;&amp; (numerator &amp; 1) == 0)</span>
+        {
+<span class="fc" id="L117">            numerator /= 2;</span>
+<span class="fc" id="L118">            denominator /= 2;</span>
+        }
+<span class="fc bfc" id="L120" title="All 2 branches covered.">        if (denominator &lt; 0)</span>
+        {
+<span class="fc bfc" id="L122" title="All 4 branches covered.">            if (numerator == Integer.MIN_VALUE || denominator == Integer.MIN_VALUE)</span>
+            {
+<span class="fc" id="L124">                throw new ArithmeticException(&quot;overflow: can't negate&quot;);</span>
+            }
+<span class="fc" id="L126">            numerator = -numerator;</span>
+<span class="fc" id="L127">            denominator = -denominator;</span>
+        }
+        // simplify fraction.
+<span class="fc" id="L130">        final int gcd = greatestCommonDivisor(numerator, denominator);</span>
+<span class="fc" id="L131">        numerator /= gcd;</span>
+<span class="fc" id="L132">        denominator /= gcd;</span>
+<span class="fc" id="L133">        return new Fraction(numerator, denominator);</span>
+    }
+
+    /**
+     * Gets the greatest common divisor of the absolute value of
+     * two numbers, using the &quot;binary gcd&quot; method which avoids
+     * division and modulo operations.  See Knuth 4.5.2 algorithm B.
+     * This algorithm is due to Josef Stein (1961).
+     *
+     * @param u  a non-zero number
+     * @param v  a non-zero number
+     * @return the greatest common divisor, never zero
+     */
+    public static int greatestCommonDivisor(int u, int v)
+    {
+        // if both operands are zero, throw new ArithmeticException
+<span class="fc bfc" id="L149" title="All 4 branches covered.">        if (u == 0 &amp;&amp; v == 0)</span>
+        {
+<span class="fc" id="L151">            throw new ArithmeticException(&quot;u and v must not be zero numbers&quot;);</span>
+        }
+        
+        // From Commons Math:
+<span class="fc bfc" id="L155" title="All 4 branches covered.">        if (u == 0 || v == 0)</span>
+        {
+<span class="fc bfc" id="L157" title="All 4 branches covered.">            if (u == Integer.MIN_VALUE || v == Integer.MIN_VALUE)</span>
+            {
+<span class="fc" id="L159">                throw new ArithmeticException(&quot;overflow: gcd is 2^31&quot;);</span>
+            }
+<span class="fc" id="L161">            return Math.abs(u) + Math.abs(v);</span>
+        }
+        // if either operand is abs 1, return 1:
+<span class="fc bfc" id="L164" title="All 4 branches covered.">        if (Math.abs(u) == 1 || Math.abs(v) == 1)</span>
+        {
+<span class="fc" id="L166">            return 1;</span>
+        }
+        // keep u and v negative, as negative integers range down to
+        // -2^31, while positive numbers can only be as large as 2^31-1
+        // (i.e. we can't necessarily negate a negative number without
+        // overflow)
+<span class="fc bfc" id="L172" title="All 2 branches covered.">        if (u &gt; 0)</span>
+        {
+<span class="fc" id="L174">            u = -u;</span>
+        } // make u negative
+<span class="fc bfc" id="L176" title="All 2 branches covered.">        if (v &gt; 0)</span>
+        {
+<span class="fc" id="L178">            v = -v;</span>
+        } // make v negative
+        // B1. [Find power of 2]
+<span class="fc" id="L181">        int k = 0;</span>
+<span class="pc bpc" id="L182" title="1 of 6 branches missed.">        while ((u &amp; 1) == 0 &amp;&amp; (v &amp; 1) == 0 &amp;&amp; k &lt; 31)</span>
+        { // while u and v are both even...
+<span class="fc" id="L184">            u /= 2;</span>
+<span class="fc" id="L185">            v /= 2;</span>
+<span class="fc" id="L186">            k++; // cast out twos.</span>
+        }
+<span class="fc bfc" id="L188" title="All 2 branches covered.">        if (k == 31)</span>
+        {
+<span class="fc" id="L190">            throw new ArithmeticException(&quot;overflow: gcd is 2^31&quot;);</span>
+        }
+        // B2. Initialize: u and v have been divided by 2^k and at least
+        // one is odd.
+<span class="fc bfc" id="L194" title="All 2 branches covered.">        int t = (u &amp; 1) == 1 ? v : -(u / 2)/* B3 */;</span>
+        // t negative: u was odd, v may be even (t replaces v)
+        // t positive: u was even, v is odd (t replaces u)
+        do
+        {
+            /* assert u&lt;0 &amp;&amp; v&lt;0; */
+            // B4/B3: cast out twos from t.
+<span class="fc bfc" id="L201" title="All 2 branches covered.">            while ((t &amp; 1) == 0)</span>
+            { // while t is even.
+<span class="fc" id="L203">                t /= 2; // cast out twos</span>
+            }
+            // B5 [reset max(u,v)]
+<span class="fc bfc" id="L206" title="All 2 branches covered.">            if (t &gt; 0)</span>
+            {
+<span class="fc" id="L208">                u = -t;</span>
+            } else
+            {
+<span class="fc" id="L211">                v = t;</span>
+            }
+            // B6/B3. at this point both u and v should be odd.
+<span class="fc" id="L214">            t = (v - u) / 2;</span>
+            // |u| larger: t positive (replace u)
+            // |v| larger: t negative (replace v)
+<span class="fc bfc" id="L217" title="All 2 branches covered.">        } while (t != 0);</span>
+<span class="fc" id="L218">        return -u * (1 &lt;&lt; k); // gcd is u*2^k</span>
+    }
+
+    /**
+     * Gets a hashCode for the fraction.
+     *
+     * @return a hash code value for this object
+     */
+    @Override
+    public int hashCode() {
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">        if (hashCode == 0) {</span>
+            // hash code update should be atomic.
+<span class="fc" id="L230">            hashCode = 37 * (37 * 17 + getNumerator()) + getDenominator();</span>
+        }
+<span class="fc" id="L232">        return hashCode;</span>
+    }
+
+    /**
+     * Compares this fraction to another object to test if they are equal.
+     *
+     * &lt;p&gt;To be equal, both values must be equal. Thus 2/4 is not equal to 1/2.&lt;/p&gt;
+     *
+     * @param obj the reference object with which to compare
+     * @return {@code true} if this object is equal
+     */
+    @Override
+    public boolean equals(final Object obj)
+    {
+<span class="fc bfc" id="L246" title="All 2 branches covered.">        if (obj == this)</span>
+        {
+<span class="fc" id="L248">            return true;</span>
+        }
+<span class="pc bpc" id="L250" title="1 of 2 branches missed.">        if (!(obj instanceof Fraction))</span>
+        {
+<span class="nc" id="L252">            return false;</span>
+        }
+<span class="fc" id="L254">        final Fraction other = (Fraction) obj;</span>
+<span class="pc bpc" id="L255" title="2 of 4 branches missed.">        return getNumerator() == other.getNumerator() &amp;&amp; getDenominator() == other.getDenominator();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

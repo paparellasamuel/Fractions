@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FractionTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tests in 'Fractions.test' Coverage Results</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">FractionTest.java</span></div><h1>FractionTest.java</h1><pre class="source lang-java linenums">import it.uniba.itss2324.SAFR.homeworks.Fraction;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+<span class="fc" id="L12">public class FractionTest</span>
+{
+    @Nested
+<span class="fc" id="L15">    class FractionConstructorTests</span>
+    {
+        @ParameterizedTest
+        @MethodSource(&quot;validFractionProvider&quot;)
+        void shouldReturnAValidFraction(Fraction fraction, int expectedNumerator, int expectedDenominator) // T1
+        {
+<span class="fc" id="L21">            assertAll(</span>
+<span class="fc" id="L22">                    () -&gt; assertEquals(expectedNumerator, fraction.getNumerator()),</span>
+<span class="fc" id="L23">                    () -&gt; assertEquals(expectedDenominator, fraction.getDenominator())</span>
+            );
+<span class="fc" id="L25">        }</span>
+
+        private static Stream&lt;Arguments&gt; validFractionProvider()
+        {
+<span class="fc" id="L29">            return Stream.of(</span>
+<span class="fc" id="L30">                    Arguments.of(new Fraction(1, 2), 1, 2), // T1.1</span>
+<span class="fc" id="L31">                    Arguments.of(new Fraction(1, -2), -1, 2), // T1.2</span>
+<span class="fc" id="L32">                    Arguments.of(new Fraction(-1, 2), -1, 2), // T1.3</span>
+<span class="fc" id="L33">                    Arguments.of(new Fraction(-1, -2), 1, 2) // T1.4</span>
+            );
+        }
+
+        @Test
+        void zeroDenominatorShouldThrowArithmeticException() // T2
+        {
+<span class="pc" id="L40">            assertThrows(ArithmeticException.class, () -&gt; new Fraction(1, 0));</span>
+
+            // Other cases:
+            // first case: numerator is Integer.MAX_VALUE
+<span class="pc" id="L44">            assertThrows(ArithmeticException.class, () -&gt; new Fraction(Integer.MAX_VALUE, 0));</span>
+
+            // second case: numerator is Integer.MIN_VALUE
+<span class="pc" id="L47">            assertThrows(ArithmeticException.class, () -&gt; new Fraction(Integer.MIN_VALUE, 0));</span>
+<span class="fc" id="L48">        }</span>
+
+        @Test
+        void zeroNumeratorShouldReturnZero() // T3
+        {
+            // First case: the denominator is one
+<span class="fc" id="L54">            assertEquals(Fraction.ZERO, new Fraction(0, 1));</span>
+
+            // Second case: the denominator is minus two
+<span class="fc" id="L57">            assertEquals(Fraction.ZERO, new Fraction(0, -2));</span>
+
+            // Other cases:
+            // first case: denominator is Integer.MAX_VALUE
+<span class="fc" id="L61">            assertEquals(Fraction.ZERO, new Fraction(0, Integer.MAX_VALUE));</span>
+
+            // second case: denominator is Integer.MIN_VALUE
+<span class="fc" id="L64">            assertEquals(Fraction.ZERO, new Fraction(0, Integer.MIN_VALUE));</span>
+
+            // third case: denominator is Integer.MAX_VALUE - 1
+<span class="fc" id="L67">            assertEquals(Fraction.ZERO, new Fraction(0, Integer.MAX_VALUE - 1));</span>
+
+            // fourth case: denominator is Integer.MIN_VALUE + 1
+<span class="fc" id="L70">            assertEquals(Fraction.ZERO, new Fraction(0, Integer.MIN_VALUE + 1));</span>
+<span class="fc" id="L71">        }</span>
+
+        @Test
+        void negativeDenominatorShouldThrowArithmeticException() // T4
+        {
+            // First case: the numerator is Integer.MIN_VALUE
+<span class="pc" id="L77">            assertThrows(ArithmeticException.class, () -&gt; new Fraction(Integer.MIN_VALUE, -1));</span>
+
+            // Second case: the denominator is Integer.MIN_VALUE
+<span class="pc" id="L80">            assertThrows(ArithmeticException.class, () -&gt; new Fraction(1, Integer.MIN_VALUE));</span>
+
+            // Other cases: first both numerator and denominator are Integer.MIN_VALUE;
+            // second: the numerator is Integer.MAX_VALUE and the denominator is Integer.MIN_VALUE
+<span class="pc" id="L84">            assertThrows(ArithmeticException.class, () -&gt; new Fraction(Integer.MIN_VALUE, Integer.MIN_VALUE));</span>
+<span class="pc" id="L85">            assertThrows(ArithmeticException.class, () -&gt; new Fraction(Integer.MAX_VALUE, Integer.MIN_VALUE));</span>
+<span class="fc" id="L86">        }</span>
+
+        // The range values of the numerator is [Integer.MIN_VALUE, Integer.MAX_VALUE],
+        // while the range values of the denominator is [Integer.MIN_VALUE, -1] U [1, Integer.MAX_VALUE]
+        @ParameterizedTest
+        @MethodSource(&quot;fractionBoundaryValuesProvider&quot;)
+        void fractionBoundaryValues(Fraction fraction, int expectedNumerator, int expectedDenominator) // T5
+        {
+<span class="fc" id="L94">            assertAll(</span>
+<span class="fc" id="L95">                    () -&gt; assertEquals(expectedNumerator, fraction.getNumerator()),</span>
+<span class="fc" id="L96">                    () -&gt; assertEquals(expectedDenominator, fraction.getDenominator())</span>
+            );
+<span class="fc" id="L98">        }</span>
+
+        private static Stream&lt;Arguments&gt; fractionBoundaryValuesProvider()
+        {
+<span class="fc" id="L102">            return Stream.of(</span>
+                    // First case: the numerator is Integer.MIN_VALUE
+<span class="fc" id="L104">                    Arguments.of(new Fraction(Integer.MIN_VALUE, 1), Integer.MIN_VALUE, 1),</span>
+<span class="fc" id="L105">                    Arguments.of(new Fraction(Integer.MIN_VALUE, Integer.MAX_VALUE), Integer.MIN_VALUE, Integer.MAX_VALUE),</span>
+
+                    // Second case: the numerator is Integer.MAX_VALUE
+<span class="fc" id="L108">                    Arguments.of(new Fraction(Integer.MAX_VALUE, -1), -Integer.MAX_VALUE, 1),</span>
+<span class="fc" id="L109">                    Arguments.of(new Fraction(Integer.MAX_VALUE, 1), Integer.MAX_VALUE, 1),</span>
+<span class="fc" id="L110">                    Arguments.of(new Fraction(Integer.MAX_VALUE, Integer.MAX_VALUE), Integer.MAX_VALUE, Integer.MAX_VALUE),</span>
+
+                    // Third case: the numerator is Integer.MIN_VALUE + 1
+<span class="fc" id="L113">                    Arguments.of(new Fraction(Integer.MIN_VALUE + 1, Integer.MIN_VALUE + 1), -(Integer.MIN_VALUE + 1), -(Integer.MIN_VALUE + 1)),</span>
+<span class="fc" id="L114">                    Arguments.of(new Fraction(Integer.MIN_VALUE + 1, -1), -(Integer.MIN_VALUE + 1), 1),</span>
+<span class="fc" id="L115">                    Arguments.of(new Fraction(Integer.MIN_VALUE + 1, 1), Integer.MIN_VALUE + 1, 1),</span>
+<span class="fc" id="L116">                    Arguments.of(new Fraction(Integer.MIN_VALUE + 1, Integer.MAX_VALUE - 1), Integer.MIN_VALUE + 1, Integer.MAX_VALUE - 1),</span>
+
+                    // Fourth case: the numerator is Integer.MAX_VALUE - 1
+<span class="fc" id="L119">                    Arguments.of(new Fraction(Integer.MAX_VALUE - 1, Integer.MIN_VALUE + 1), -(Integer.MAX_VALUE - 1), -(Integer.MIN_VALUE + 1)),</span>
+<span class="fc" id="L120">                    Arguments.of(new Fraction(Integer.MAX_VALUE - 1, -1), -(Integer.MAX_VALUE - 1), 1),</span>
+<span class="fc" id="L121">                    Arguments.of(new Fraction(Integer.MAX_VALUE - 1, 1), Integer.MAX_VALUE - 1, 1),</span>
+<span class="fc" id="L122">                    Arguments.of(new Fraction(Integer.MAX_VALUE - 1, Integer.MAX_VALUE - 1), Integer.MAX_VALUE - 1, Integer.MAX_VALUE - 1)</span>
+            );
+        }
+    }
+
+    @Nested
+<span class="fc" id="L128">    class GetReducedFractionTests</span>
+    {
+        @ParameterizedTest
+        @MethodSource(&quot;reducedFractionProvider&quot;)
+        void shouldReturnAValidReducedFraction(Fraction expectedFraction, int numerator, int denominator) // T6
+        {
+<span class="fc" id="L134">            assertEquals(expectedFraction, Fraction.getReducedFraction(numerator, denominator));</span>
+<span class="fc" id="L135">        }</span>
+
+        private static Stream&lt;Arguments&gt; reducedFractionProvider()
+        {
+<span class="fc" id="L139">            return Stream.of(</span>
+                    // T6.1, 2/4 should return 1/2
+<span class="fc" id="L141">                    Arguments.of(new Fraction(1, 2), 2, 4),</span>
+
+                    // T6.2, 2/-6 should return -1/3
+<span class="fc" id="L144">                    Arguments.of(new Fraction(-1, 3), 2, -6),</span>
+
+                    // T6.3, -4/6 should return -2/3
+<span class="fc" id="L147">                    Arguments.of(new Fraction(-2, 3), -4, 6),</span>
+
+                    // T6.4, -6/-4 should return 3/2
+<span class="fc" id="L150">                    Arguments.of(new Fraction(3, 2), -6, -4),</span>
+
+                    // T6.5, 2/2 should return 1/1 or 1
+<span class="fc" id="L153">                    Arguments.of(new Fraction(1, 1), 2, 2),</span>
+<span class="fc" id="L154">                    Arguments.of(new Fraction(-1, 1), -2, 2),</span>
+<span class="fc" id="L155">                    Arguments.of(new Fraction(-1, 1), 2, -2),</span>
+<span class="fc" id="L156">                    Arguments.of(new Fraction(1, 1), -2, -2),</span>
+
+                    // T6.6, odd numerator and odd denominator
+                    // This test also verifies the method behavior with prime numbers.
+                    // 1 and 3 are indeed the first two prime numbers
+<span class="fc" id="L161">                    Arguments.of(new Fraction(1, 3), 1, 3),</span>
+<span class="fc" id="L162">                    Arguments.of(new Fraction(-1, 3), 1, -3),</span>
+<span class="fc" id="L163">                    Arguments.of(new Fraction(-1, 3), -1, 3),</span>
+<span class="fc" id="L164">                    Arguments.of(new Fraction(1, 3), -1, -3),</span>
+
+                    // T6.7, odd numerator and even denominator
+<span class="fc" id="L167">                    Arguments.of(new Fraction(3, 4), 3, 4),</span>
+<span class="fc" id="L168">                    Arguments.of(new Fraction(-3, 4), 3, -4),</span>
+<span class="fc" id="L169">                    Arguments.of(new Fraction(-3, 4), -3, 4),</span>
+<span class="fc" id="L170">                    Arguments.of(new Fraction(3, 4), -3, -4),</span>
+
+                    // T6.8, even numerator and odd denominator
+<span class="fc" id="L173">                    Arguments.of(new Fraction(2, 3), 2, 3),</span>
+<span class="fc" id="L174">                    Arguments.of(new Fraction(-2, 3), 2, -3),</span>
+<span class="fc" id="L175">                    Arguments.of(new Fraction(-2, 3), -2, 3),</span>
+<span class="fc" id="L176">                    Arguments.of(new Fraction(2, 3), -2, -3)</span>
+
+            );
+        }
+
+        @Test
+        void zeroDenominatorShouldThrowArithmeticException() // T7
+        {
+<span class="pc" id="L184">            assertThrows(ArithmeticException.class, () -&gt; Fraction.getReducedFraction(1, 0));</span>
+
+            // Other cases:
+            // first case: numerator is Integer.MAX_VALUE
+<span class="pc" id="L188">            assertThrows(ArithmeticException.class, () -&gt; Fraction.getReducedFraction(Integer.MAX_VALUE, 0));</span>
+
+            // second case: numerator is Integer.MIN_VALUE
+<span class="pc" id="L191">            assertThrows(ArithmeticException.class, () -&gt; Fraction.getReducedFraction(Integer.MIN_VALUE, 0));</span>
+<span class="fc" id="L192">        }</span>
+
+        @Test
+        void zeroNumeratorShouldReturnZEROConstant() // T8
+        {
+<span class="fc" id="L197">            assertEquals(Fraction.ZERO, Fraction.getReducedFraction(0, 1));</span>
+
+            // Other cases:
+            // first case: denominator is Integer.MAX_VALUE
+<span class="fc" id="L201">            assertEquals(Fraction.ZERO, Fraction.getReducedFraction(0, Integer.MAX_VALUE));</span>
+
+            // second case: denominator is Integer.MIN_VALUE
+<span class="fc" id="L204">            assertEquals(Fraction.ZERO, Fraction.getReducedFraction(0, Integer.MIN_VALUE));</span>
+
+            // third case: denominator is Integer.MAX_VALUE - 1
+<span class="fc" id="L207">            assertEquals(Fraction.ZERO, Fraction.getReducedFraction(0, Integer.MAX_VALUE - 1));</span>
+
+            // fourth case: denominator is Integer.MIN_VALUE + 1
+<span class="fc" id="L210">            assertEquals(Fraction.ZERO, Fraction.getReducedFraction(0, Integer.MIN_VALUE + 1));</span>
+<span class="fc" id="L211">        }</span>
+
+        @ParameterizedTest
+        @MethodSource(&quot;validEvenReducedFractionProvider&quot;)
+        void validEvenNumeratorMIN_VALUE_DenominatorReducedFraction(int numerator, int denominator) // T9
+        {
+<span class="fc" id="L217">            assertEquals(new Fraction(numerator / 2, denominator / 2), Fraction.getReducedFraction(numerator, denominator));</span>
+<span class="fc" id="L218">        }</span>
+
+        static Stream&lt;Arguments&gt; validEvenReducedFractionProvider()
+        {
+<span class="fc" id="L222">            return Stream.of(</span>
+                    // First case: the numerator is a small even number, positive and negative
+<span class="fc" id="L224">                    Arguments.of(2, Integer.MIN_VALUE), // T9.1</span>
+<span class="fc" id="L225">                    Arguments.of(-2, Integer.MIN_VALUE) ,// T9.2</span>
+
+                    // Second case: the numerator is a large even number
+<span class="fc" id="L228">                    Arguments.of(Integer.MAX_VALUE - 1, Integer.MIN_VALUE), // T9.3</span>
+
+                    // Third case: the numerator is a very small number
+<span class="fc" id="L231">                    Arguments.of(Integer.MIN_VALUE + 2, Integer.MIN_VALUE) // T9.4</span>
+            );
+        }
+
+        @Test
+        void negativeDenominatorShouldThrowArithmeticException() // T10, same test as T4
+        {
+            // First case: the numerator is Integer.MIN_VALUE
+<span class="pc" id="L239">            assertThrows(ArithmeticException.class, () -&gt; Fraction.getReducedFraction(Integer.MIN_VALUE, -1));</span>
+
+            // Second case: the denominator is Integer.MIN_VALUE
+<span class="pc" id="L242">            assertThrows(ArithmeticException.class, () -&gt; Fraction.getReducedFraction(1, Integer.MIN_VALUE));</span>
+
+            // Other case
+<span class="pc" id="L245">            assertThrows(ArithmeticException.class, () -&gt; Fraction.getReducedFraction(Integer.MAX_VALUE, Integer.MIN_VALUE));</span>
+<span class="fc" id="L246">        }</span>
+
+        // The range values of the numerator is [Integer.MIN_VALUE, Integer.MAX_VALUE],
+        // while the range values of the denominator is [Integer.MIN_VALUE, -1] U [1, Integer.MAX_VALUE]
+        @Test
+        void reducedFractionBoundaryValues() // T11
+        {
+<span class="fc" id="L253">            assertAll(</span>
+            // First case: the numerator is Integer.MIN_VALUE
+<span class="fc" id="L255">            () -&gt; assertEquals(new Fraction(Integer.MIN_VALUE, 1), Fraction.getReducedFraction(Integer.MIN_VALUE, 1)),</span>
+<span class="fc" id="L256">            () -&gt; assertEquals(new Fraction(Integer.MIN_VALUE, Integer.MAX_VALUE), Fraction.getReducedFraction(Integer.MIN_VALUE, Integer.MAX_VALUE)),</span>
+
+            // Second case: the numerator is Integer.MAX_VALUE
+<span class="fc" id="L259">            () -&gt; assertEquals(new Fraction(-Integer.MAX_VALUE, 1), Fraction.getReducedFraction(Integer.MAX_VALUE, -1)),</span>
+<span class="fc" id="L260">            () -&gt; assertEquals(new Fraction(Integer.MAX_VALUE, 1), Fraction.getReducedFraction(Integer.MAX_VALUE, 1)),</span>
+<span class="fc" id="L261">            () -&gt; assertEquals(new Fraction(1, 1), Fraction.getReducedFraction(Integer.MAX_VALUE, Integer.MAX_VALUE)),</span>
+
+            // Third case: the numerator is Integer.MIN_VALUE + 1
+<span class="fc" id="L264">            () -&gt; assertEquals(new Fraction(1, 1), Fraction.getReducedFraction(Integer.MIN_VALUE + 1, Integer.MIN_VALUE + 1)),</span>
+<span class="fc" id="L265">            () -&gt; assertEquals(new Fraction(-(Integer.MIN_VALUE + 1), 1), Fraction.getReducedFraction(Integer.MIN_VALUE + 1, -1)),</span>
+<span class="fc" id="L266">            () -&gt; assertEquals(new Fraction(Integer.MIN_VALUE + 1, 1), Fraction.getReducedFraction(Integer.MIN_VALUE + 1, 1)),</span>
+<span class="fc" id="L267">            () -&gt; assertEquals(new Fraction(Integer.MIN_VALUE + 1, Integer.MAX_VALUE - 1), Fraction.getReducedFraction(Integer.MIN_VALUE + 1, Integer.MAX_VALUE - 1)),</span>
+
+            // Fourth case: the numerator is Integer.MAX_VALUE - 1
+<span class="fc" id="L270">            () -&gt; assertEquals(new Fraction(Integer.MAX_VALUE - 1, Integer.MIN_VALUE + 1), Fraction.getReducedFraction(Integer.MAX_VALUE - 1, Integer.MIN_VALUE + 1)),</span>
+<span class="fc" id="L271">            () -&gt; assertEquals(new Fraction(-(Integer.MAX_VALUE - 1), 1), Fraction.getReducedFraction(Integer.MAX_VALUE - 1, -1)),</span>
+<span class="fc" id="L272">            () -&gt; assertEquals(new Fraction(Integer.MAX_VALUE - 1, 1), Fraction.getReducedFraction(Integer.MAX_VALUE - 1, 1)),</span>
+<span class="fc" id="L273">            () -&gt; assertEquals(new Fraction(1, 1), Fraction.getReducedFraction(Integer.MAX_VALUE - 1, Integer.MAX_VALUE - 1))</span>
+            );
+<span class="fc" id="L275">        }</span>
+    }
+
+    @Nested
+<span class="fc" id="L279">    class GreatestCommonDivisorTests</span>
+    {
+        @Test
+        void shouldReturnCorrectGCD() // T12
+        {
+            // Classic GCD calculation
+<span class="fc" id="L285">            assertEquals(4, Fraction.greatestCommonDivisor(4, 8));</span>
+<span class="fc" id="L286">            assertEquals(4, Fraction.greatestCommonDivisor(-4, 8));</span>
+<span class="fc" id="L287">            assertEquals(4, Fraction.greatestCommonDivisor(8, -4));</span>
+<span class="fc" id="L288">            assertEquals(4, Fraction.greatestCommonDivisor(-8, -4));</span>
+
+            // The GCD of two prime numbers that are not the same is 1
+<span class="fc" id="L291">            assertEquals(1, Fraction.greatestCommonDivisor(3, 5));</span>
+<span class="fc" id="L292">            assertEquals(1, Fraction.greatestCommonDivisor(-3, 5));</span>
+<span class="fc" id="L293">            assertEquals(1, Fraction.greatestCommonDivisor(3, -5));</span>
+<span class="fc" id="L294">            assertEquals(1, Fraction.greatestCommonDivisor(-3, -5));</span>
+
+            // GCD calculation between an even number and an odd number
+            // First case: u is even and v is odd
+<span class="fc" id="L298">            assertEquals(1, Fraction.greatestCommonDivisor(2, 3));</span>
+<span class="fc" id="L299">            assertEquals(1, Fraction.greatestCommonDivisor(-2, 3));</span>
+<span class="fc" id="L300">            assertEquals(1, Fraction.greatestCommonDivisor(2, -3));</span>
+<span class="fc" id="L301">            assertEquals(1, Fraction.greatestCommonDivisor(-2, -3));</span>
+
+            // Second case: u is odd and v is even
+<span class="fc" id="L304">            assertEquals(1, Fraction.greatestCommonDivisor(3, 4));</span>
+<span class="fc" id="L305">            assertEquals(1, Fraction.greatestCommonDivisor(-3, 4));</span>
+<span class="fc" id="L306">            assertEquals(1, Fraction.greatestCommonDivisor(3, -4));</span>
+<span class="fc" id="L307">            assertEquals(1, Fraction.greatestCommonDivisor(-3, -4));</span>
+<span class="fc" id="L308">        }</span>
+
+        @Test
+        void zeroOperandsShouldThrowArithmeticException() // T13
+        {
+<span class="pc" id="L313">            assertThrows(ArithmeticException.class, () -&gt; Fraction.greatestCommonDivisor(0, 0));</span>
+<span class="fc" id="L314">        }</span>
+
+        @Test
+        void gcdBetweenZeroAndIntNumber() // T14
+        {
+<span class="fc" id="L319">            assertAll(</span>
+                // First case: u is zero and v is an int number
+<span class="fc" id="L321">                () -&gt; assertEquals(2, Fraction.greatestCommonDivisor(0, 2)), // T14.1</span>
+<span class="fc" id="L322">                () -&gt; assertEquals(2, Fraction.greatestCommonDivisor(0, -2)), // T14.2</span>
+
+                // Second case: u is an int number and v is zero
+<span class="fc" id="L325">                () -&gt; assertEquals(2, Fraction.greatestCommonDivisor(2, 0)), // T14.3</span>
+<span class="fc" id="L326">                () -&gt; assertEquals(2, Fraction.greatestCommonDivisor(-2, 0)) // T14.4</span>
+            );
+<span class="fc" id="L328">        }</span>
+
+        @Test
+        void testGCDOverflow() // T15
+        {
+            // First case: u is zero and v is Integer.MIN_VALUE
+<span class="fc" id="L334">            assertThrows(ArithmeticException.class, () -&gt; {</span>
+<span class="nc" id="L335">                Fraction.greatestCommonDivisor(0, Integer.MIN_VALUE);</span>
+<span class="nc" id="L336">            });</span>
+
+            // Second case: u is Integer.MIN_VALUE and v is zero
+<span class="fc" id="L339">            assertThrows(ArithmeticException.class, () -&gt; {</span>
+<span class="nc" id="L340">                Fraction.greatestCommonDivisor(Integer.MIN_VALUE, 0);</span>
+<span class="nc" id="L341">            });</span>
+
+            // Third case: both u and v are Integer.MIN_VALUE.
+            // This triggers the condition at line 171
+<span class="fc" id="L345">            assertThrows(ArithmeticException.class, () -&gt; {</span>
+<span class="nc" id="L346">                Fraction.greatestCommonDivisor(Integer.MIN_VALUE, Integer.MIN_VALUE);</span>
+<span class="nc" id="L347">            });</span>
+<span class="fc" id="L348">        }</span>
+
+        @Test
+        void gdcBetweenOneAndIntNumber() // T16
+        {
+<span class="fc" id="L353">            assertAll(</span>
+                // First case: u is one and v is an int number
+<span class="fc" id="L355">                () -&gt; assertEquals(1, Fraction.greatestCommonDivisor(1, 2)), // T16.1</span>
+<span class="fc" id="L356">                () -&gt; assertEquals(1, Fraction.greatestCommonDivisor(-1, 2)), // T16.2</span>
+<span class="fc" id="L357">                () -&gt; assertEquals(1, Fraction.greatestCommonDivisor(-1, -2)), // T16.3</span>
+
+                // Second case: u is an int number and v is one
+<span class="fc" id="L360">                () -&gt; assertEquals(1, Fraction.greatestCommonDivisor(2, 1)), // T16.4</span>
+<span class="fc" id="L361">                () -&gt; assertEquals(1, Fraction.greatestCommonDivisor(-2, 1)), // T16.5</span>
+<span class="fc" id="L362">                () -&gt; assertEquals(1, Fraction.greatestCommonDivisor(-2, -1)), // T16.6</span>
+
+                // Third case: both u and v are one
+<span class="fc" id="L365">                () -&gt; assertEquals(1, Fraction.greatestCommonDivisor(1, 1)), // T16.7</span>
+<span class="fc" id="L366">                () -&gt; assertEquals(1, Fraction.greatestCommonDivisor(-1, 1)), // T16.8</span>
+<span class="fc" id="L367">                () -&gt; assertEquals(1, Fraction.greatestCommonDivisor(-1, -1)) // T16.9</span>
+            );
+<span class="fc" id="L369">        }</span>
+
+        @ParameterizedTest
+        @MethodSource(&quot;gcdBoundaryValuesProvider&quot;)
+        void testGCDBoundaryValues(int expectedGCD, int u, int v) // T17
+        {
+<span class="fc" id="L375">            assertEquals(expectedGCD, Fraction.greatestCommonDivisor(u, v));</span>
+<span class="fc" id="L376">        }</span>
+
+        static Stream&lt;Arguments&gt; gcdBoundaryValuesProvider()
+        {
+<span class="fc" id="L380">            return Stream.of(</span>
+                    // GCD calculation between one and Integer.MIN_VALUE
+<span class="fc" id="L382">                    Arguments.of(1, 1, Integer.MIN_VALUE),</span>
+<span class="fc" id="L383">                    Arguments.of(1, Integer.MIN_VALUE, 1),</span>
+<span class="fc" id="L384">                    Arguments.of(1, -1, Integer.MIN_VALUE),</span>
+<span class="fc" id="L385">                    Arguments.of(1, Integer.MIN_VALUE, -1),</span>
+
+                    // GCD calculation between one and Integer.MAX_VALUE
+<span class="fc" id="L388">                    Arguments.of(1, 1, Integer.MAX_VALUE),</span>
+<span class="fc" id="L389">                    Arguments.of(1, Integer.MAX_VALUE, 1),</span>
+<span class="fc" id="L390">                    Arguments.of(1, -1, Integer.MAX_VALUE),</span>
+<span class="fc" id="L391">                    Arguments.of(1, Integer.MAX_VALUE, -1),</span>
+
+                    // GCD calculation between Integer.MIN_VALUE and Integer.MAX_VALUE
+<span class="fc" id="L394">                    Arguments.of(1, Integer.MIN_VALUE, Integer.MAX_VALUE),</span>
+<span class="fc" id="L395">                    Arguments.of(1, Integer.MAX_VALUE, Integer.MIN_VALUE),</span>
+<span class="fc" id="L396">                    Arguments.of(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE),</span>
+
+                    // Test GCD with an even number and Integer.MIN_VALUE
+<span class="fc" id="L399">                    Arguments.of(2, 2, Integer.MIN_VALUE),</span>
+<span class="fc" id="L400">                    Arguments.of(2, Integer.MIN_VALUE, 2),</span>
+<span class="fc" id="L401">                    Arguments.of(2, -2, Integer.MIN_VALUE),</span>
+<span class="fc" id="L402">                    Arguments.of(2, Integer.MIN_VALUE, -2),</span>
+
+                    // Test GCD with an even number and Integer.MAX_VALUE
+<span class="fc" id="L405">                    Arguments.of(1, 2, Integer.MAX_VALUE),</span>
+<span class="fc" id="L406">                    Arguments.of(1, Integer.MAX_VALUE, 2),</span>
+<span class="fc" id="L407">                    Arguments.of(1, -2, Integer.MAX_VALUE),</span>
+<span class="fc" id="L408">                    Arguments.of(1, Integer.MAX_VALUE, -2),</span>
+
+                    // Test GCD with an odd number and Integer.MIN_VALUE
+<span class="fc" id="L411">                    Arguments.of(1, 3, Integer.MIN_VALUE),</span>
+<span class="fc" id="L412">                    Arguments.of(1, Integer.MIN_VALUE, 3),</span>
+<span class="fc" id="L413">                    Arguments.of(1, -3, Integer.MIN_VALUE),</span>
+<span class="fc" id="L414">                    Arguments.of(1, Integer.MIN_VALUE, -3),</span>
+
+                    // Test GCD with an odd number and Integer.MAX_VALUE
+<span class="fc" id="L417">                    Arguments.of(1, 3, Integer.MAX_VALUE),</span>
+<span class="fc" id="L418">                    Arguments.of(1, Integer.MAX_VALUE, 3),</span>
+<span class="fc" id="L419">                    Arguments.of(1, -3, Integer.MAX_VALUE),</span>
+<span class="fc" id="L420">                    Arguments.of(1, Integer.MAX_VALUE, -3),</span>
+
+                    // Test GCD with Integer.MIN_VALUE + 1
+<span class="fc" id="L423">                    Arguments.of(-(Integer.MIN_VALUE + 1), Integer.MIN_VALUE + 1, Integer.MIN_VALUE + 1),</span>
+<span class="fc" id="L424">                    Arguments.of(1, Integer.MIN_VALUE + 1, -1),</span>
+<span class="fc" id="L425">                    Arguments.of(1, Integer.MIN_VALUE + 1, 1),</span>
+<span class="fc" id="L426">                    Arguments.of(1, Integer.MIN_VALUE + 1, Integer.MAX_VALUE - 1),</span>
+
+                    // Test GCD with Integer.MAX_VALUE - 1
+<span class="fc" id="L429">                    Arguments.of(1, Integer.MAX_VALUE - 1, Integer.MIN_VALUE + 1),</span>
+<span class="fc" id="L430">                    Arguments.of(1, Integer.MAX_VALUE - 1, -1),</span>
+<span class="fc" id="L431">                    Arguments.of(1, Integer.MAX_VALUE - 1, 1),</span>
+<span class="fc" id="L432">                    Arguments.of(Integer.MAX_VALUE - 1, Integer.MAX_VALUE - 1, Integer.MAX_VALUE - 1)</span>
+            );
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

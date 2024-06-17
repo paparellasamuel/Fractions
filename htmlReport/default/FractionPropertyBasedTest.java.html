@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FractionPropertyBasedTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tests in 'Fractions.test' Coverage Results</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">FractionPropertyBasedTest.java</span></div><h1>FractionPropertyBasedTest.java</h1><pre class="source lang-java linenums">import it.uniba.itss2324.SAFR.homeworks.Fraction;
+import net.jqwik.api.*;
+import net.jqwik.api.constraints.IntRange;
+import net.jqwik.api.statistics.Histogram;
+import net.jqwik.api.statistics.Statistics;
+import net.jqwik.api.statistics.StatisticsReport;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+<span class="fc" id="L10">public class FractionPropertyBasedTest </span>
+{
+    // PBT1
+    @Property
+    @Report(Reporting.GENERATED)
+    void testInvalidFractionZeroDenominator(
+            @ForAll @IntRange(min = Integer.MIN_VALUE) int numerator,
+             @ForAll @IntRange(max = 0) int denominator)
+    {
+        // If the denominator is zero throw new arithmetic exception
+<span class="pc" id="L20">        assertThrows(ArithmeticException.class, () -&gt; Fraction.getReducedFraction(numerator, denominator));</span>
+
+        //Statistics:
+        try {
+<span class="nc" id="L24">            Fraction.getReducedFraction(numerator, denominator);</span>
+<span class="nc" id="L25">            Statistics.collect(&quot;Exception Cases&quot;, &quot;No Exception&quot;);</span>
+<span class="fc" id="L26">        } catch (ArithmeticException e) {</span>
+<span class="fc" id="L27">            Statistics.collect(&quot;Exception Cases&quot;, &quot;ArithmeticException&quot;);</span>
+<span class="nc" id="L28">        }</span>
+<span class="fc" id="L29">    }</span>
+
+    // PBT2
+    @Property
+    @Report(Reporting.GENERATED)
+    @StatisticsReport(format = Histogram.class)
+    void reducedFractionMustNotHaveZeroDenominatorOrNumerator(
+            @ForAll @IntRange(min = Integer.MIN_VALUE + 1) int numerator,
+             @ForAll @IntRange(min = Integer.MIN_VALUE + 1) int denominator)
+    {
+        // First condition: the denominator must not be zero
+        // Second condition: the numerator must not be zero
+        // A fraction that has a zero numerator doesn't have any mathematical sense
+<span class="fc bfc" id="L42" title="All 4 branches covered.">        Assume.that(denominator != 0 &amp;&amp; numerator != 0);</span>
+
+<span class="fc" id="L44">        assertDoesNotThrow(() -&gt; Fraction.getReducedFraction(numerator, denominator));</span>
+
+
+        // Statistics:
+<span class="fc" id="L48">        Fraction reducedFraction = Fraction.getReducedFraction(numerator, denominator);</span>
+
+        // Collect statistics on the distribution of numerators and denominators
+<span class="fc" id="L51">        Statistics.collect(&quot;Numerator&quot;, reducedFraction.getNumerator());</span>
+<span class="fc" id="L52">        Statistics.collect(&quot;Denominator&quot;, reducedFraction.getDenominator());</span>
+
+        // Collect statistics on the GCD of the input fractions
+<span class="fc" id="L55">        int gcd = Fraction.greatestCommonDivisor(Math.abs(numerator), Math.abs(denominator));</span>
+<span class="fc" id="L56">        Statistics.collect(&quot;GCD&quot;, gcd);</span>
+
+        /*
+            This block of code checks if the original fraction (numerator/denominator) is equal to
+            the reduced fraction.
+
+             The isEqual variable is set to true if both the numerator and denominator of the original
+             fraction are equal to those of the reduced fraction.
+         */
+<span class="pc bpc" id="L65" title="1 of 4 branches missed.">        boolean isEqual = numerator == reducedFraction.getNumerator() &amp;&amp; denominator == reducedFraction.getDenominator();</span>
+
+        /*
+            This line collects the result of the equality check.
+
+             If isEqual is true, it means that the original fraction and the reduced fraction are the
+             same, otherwise it means that the original fraction and the reduced fraction are different.
+         */
+<span class="fc" id="L73">        Statistics.collect(&quot;Fraction Equality&quot;, isEqual);</span>
+<span class="fc" id="L74">    }</span>
+
+    //PBT3
+    @Property()
+    @Report(Reporting.GENERATED)
+    void testMIN_VALUEOverflowOddNumeratorMIN_VALUEDenominator(
+            @ForAll @IntRange(min = Integer.MIN_VALUE + 1) int numerator,
+             @ForAll @IntRange(min = Integer.MIN_VALUE, max = Integer.MIN_VALUE) int denominator)
+    {
+        /*
+            First condition:
+             If the denominator is negative:
+              1. it can be Integer.MIN_VALUE;
+
+               They can't both be Integer.MIN_VALUE because of this condition:
+               if (denominator == Integer.MIN_VALUE &amp;&amp; (numerator &amp; 1) == 0)
+               {
+                    numerator /= 2;
+                    denominator /= 2;
+               }
+
+                In this way we make sure that both are not odd numbers
+         */
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        Assume.that ((numerator &amp; 1) != 0);</span>
+
+<span class="pc" id="L99">        assertThrows(ArithmeticException.class, () -&gt; Fraction.getReducedFraction(numerator, denominator));</span>
+
+        //Statistics:
+        try {
+<span class="nc" id="L103">            Fraction.getReducedFraction(numerator, denominator);</span>
+<span class="nc" id="L104">            Statistics.collect(&quot;Exception Cases&quot;, &quot;No Exception&quot;);</span>
+<span class="fc" id="L105">        } catch (ArithmeticException e) {</span>
+<span class="fc" id="L106">            Statistics.collect(&quot;Exception Cases&quot;, &quot;ArithmeticException&quot;);</span>
+<span class="nc" id="L107">        }</span>
+<span class="fc" id="L108">    }</span>
+
+    // PBT4
+    @Property
+    @Report(Reporting.GENERATED)
+    void testMIN_VALUEOverflowMIN_VALUENumeratorOddDenominator(
+            @ForAll @IntRange(min = Integer.MIN_VALUE, max = Integer.MIN_VALUE) int numerator,
+             @ForAll @IntRange(min = Integer.MIN_VALUE + 1, max = -1) int denominator)
+    {
+        /*
+            Second condition:
+             If the denominator is negative:
+              2. the numerator can be Integer.MIN_VALUE;
+
+               They can't both be Integer.MIN_VALUE because of this condition:
+               if (denominator == Integer.MIN_VALUE &amp;&amp; (numerator &amp; 1) == 0)
+               {
+                    numerator /= 2;
+                    denominator /= 2;
+               }
+
+                In this way we make sure that both are not odd numbers
+         */
+<span class="fc bfc" id="L131" title="All 2 branches covered.">        Assume.that((denominator &amp; 1 ) != 0);</span>
+
+<span class="pc" id="L133">        assertThrows(ArithmeticException.class, () -&gt; Fraction.getReducedFraction(numerator, denominator));</span>
+
+        //Statistics:
+        try {
+<span class="nc" id="L137">            Fraction.getReducedFraction(numerator, denominator);</span>
+<span class="nc" id="L138">            Statistics.collect(&quot;Exception Cases&quot;, &quot;No Exception&quot;);</span>
+<span class="fc" id="L139">        } catch (ArithmeticException e) {</span>
+<span class="fc" id="L140">            Statistics.collect(&quot;Exception Cases&quot;, &quot;ArithmeticException&quot;);</span>
+<span class="nc" id="L141">        }</span>
+<span class="fc" id="L142">    }</span>
+
+    // PBT5
+    @Property
+    @Report(Reporting.GENERATED)
+    @StatisticsReport(format = Histogram.class)
+    void testValidNegativeReducedFraction(
+            @ForAll @IntRange(min = Integer.MIN_VALUE + 1) int numerator,
+             @ForAll @IntRange(min = Integer.MIN_VALUE + 1, max = -1) int denominator)
+    {
+        /*
+            Third condition: if the denominator is negative:
+               1.1 it must not be Integer.MIN_VALUE;
+                1.2 the numerator must not be Integer.MIN_VALUE;
+                 1.3 the numerator must not be zero.
+        */
+<span class="fc bfc" id="L158" title="All 2 branches covered.">        Assume.that(numerator != 0);</span>
+<span class="fc" id="L159">        assertDoesNotThrow(() -&gt; Fraction.getReducedFraction(numerator, denominator));</span>
+
+        //Statistics:
+<span class="fc" id="L162">        Fraction reducedFraction = Fraction.getReducedFraction(numerator, denominator);</span>
+
+        // Collect statistics on the distribution of numerators and denominators
+<span class="fc" id="L165">        Statistics.collect(&quot;Numerator&quot;, reducedFraction.getNumerator());</span>
+<span class="fc" id="L166">        Statistics.collect(&quot;Denominator&quot;, reducedFraction.getDenominator());</span>
+
+        // Collect statistics on the GCD of the input fractions
+<span class="fc" id="L169">        int gcd = Fraction.greatestCommonDivisor(Math.abs(numerator), Math.abs(denominator));</span>
+<span class="fc" id="L170">        Statistics.collect(&quot;GCD&quot;, gcd);</span>
+
+        /*
+            This block of code checks if the original fraction (numerator/denominator) is equal to
+            the reduced fraction.
+
+             The isEqual variable is set to true if both the numerator and denominator of the original
+             fraction are equal to those of the reduced fraction.
+         */
+<span class="pc bpc" id="L179" title="3 of 4 branches missed.">        boolean isEqual = numerator == reducedFraction.getNumerator() &amp;&amp; denominator == reducedFraction.getDenominator();</span>
+
+        /*
+            This line collects the result of the equality check.
+
+             If isEqual is true, it means that the original fraction and the reduced fraction are the
+             same, otherwise it means that the original fraction and the reduced fraction are different.
+         */
+<span class="fc" id="L187">        Statistics.collect(&quot;Fraction Equality&quot;, isEqual);</span>
+<span class="fc" id="L188">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
